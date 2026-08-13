@@ -1,0 +1,4 @@
+interface:
+  display_name: "商标大数据报告"
+  short_description: "基于 HandaaS 商标大数据 MCP，生成商标概况 / 申请注册趋势 / 状态分布 / 类别分布 / 检索明细的专业 HTML / Markdown / JSON 报告。"
+  default_prompt: "使用 $trademark-report 生成「企业名称」的商标大数据报告：自动补全企业全称，调用商标 MCP 工具，产出 HTML + Markdown + JSON 三件套。"
