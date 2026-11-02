@@ -1,6 +1,6 @@
 ---
 name: trademark-report
-description: Use for generating a professional trademark big-data report (商标大数据报告) from the HandaaS trademark MCP — covering 商标检索明细、商标概况、商标申请/注册趋势、状态分布、类别分布. Trigger when users ask for “商标大数据报告”, “商标分析报告”, “查一家公司的商标”, “商标检索”, “商标概况”, “商标趋势”, “商标类别分布”, or “企业商标画像”. Infer the canonical enterprise name (auto-fuzzy-completing a keyword), pick the right MCP tools, and produce HTML + Markdown + JSON reports automatically.
+description: Use for generating a professional trademark big-data report (商标大数据报告) from the HandaaS trademark MCP — covering 商标检索明细、商标概况、商标申请/注册趋势、状态分布、类别分布. Trigger when users ask for “商标大数据报告”, “商标分析报告”, “查一家公司的商标”, “商标检索”, “商标概况”, “商标趋势”, “商标类别分布”, or “企业商标画像”. Infer the canonical enterprise name (auto-fuzzy-completing a keyword), pick the right MCP tools, and produce HTML + Markdown + JSON reports automatically. MCP 服务名称触发词：商标注册信息。
 ---
 
 # 商标大数据报告
@@ -26,7 +26,22 @@ description: Use for generating a professional trademark big-data report (商标
 - 报告所有章节标题、指标卡标签必须用中文；`core_analysis.sections` 的 `title` 字段必须中文，不可显示英文 key（如 `holders`、`investments`）。
 - 指标值必须可读化：金额格式为"X 亿/万 + 币种"，地址拼接省市区，比率显示百分号。详见 `references/report-output.md` 的「数据格式约束」。
 
+## 付费调用与分页预算（强制）
+
+每次 MCP 业务调用和每一页明细请求都可能计费；希望得到 total / 页数计算**不是**全量拉取的授权。
+
+1. **先计划再调用**：调用前先推导本次报告必需的结论、需要的数据维度、工具与参数方案、所需页数和最大调用预算。上游 total 未知时，第一个必要的明细页同时用于发现 total 与报告数据，绝不为此页重复付费。
+2. **优先统计 / 概况接口**：当结论可由概况、统计等聚合接口回答时优先使用它们；仅在结论、图表、代表性记录或用户明确要求全量/计数时才拉取明细。只有在用户确实要求综合报告时才跑完整流水线，绝不因为工具存在就全部调用。
+3. **预算内取数**：使用 schema 允许的合理最大 pageSize 获取所需行数，达到证据/样本目标即停止，且始终在显式预算内。额外翻页必须有缺失结论的正当理由，而不是“想填满所有章节”。不得用样本分布冒充全量结论。
+4. **复用相同请求**：同一任务/报告内相同的工具+参数只调用一次（含首屏规划数据）；渲染只用本地已保存 JSON 重渲，不重跑 compose/MCP。禁止自动重试、重复拉取相同统计/明细、并行拉取相同数据。补充查询前先列出具体缺口并复用已返回记录。
+5. **总数与完整性口径**：`total_pages` / `remaining_pages` 只是按请求 pageSize 的估算；短而未完的页在预算内要继续翻。仅当稳定有效的 total 与实扫条数一致才算完整采集；报错、提前空页、重复页、total 变化/缺失或数量溢出均视为不完整。因显式预算或样本目标提前停止的都是部分采集，绝不宣称全量数据。
+6. **预算不足要说清缺口**：若预算不足以支撑某个关键结论，在申请扩大授权前先说明证据缺口与预计的额外调用数；不得静默降级结论，也不得擅自扩大计费范围。
+
+本 skill 分页明细：仅 `trademark_bigdata_trademark_search`（商标检索明细，pageIndex/pageSize，单页最多 50）支持分页采集，CLI `--max-pages`（默认 1）为其显式页数预算；概况（profile）与统计（stats）为聚合接口、关键词模糊查询仅用于主体确认，均保持单次调用、不分页遍历。
+
 ## MCP 服务入口
+
+- MCP 服务当前名称：商标注册信息（连接仍使用原服务目录标识）。
 
 - 上游 MCP 项目：`handaas-mcp-server/trademark-mcp-server`（位于 `HANDAAS_MCP_SERVER_ROOT` 或本仓库同级目录）。
 - Remote MCP：设置环境变量 `TRADEMARK_MCP_URL`（streamable-http），可选 `TRADEMARK_MCP_TOKEN`。
@@ -83,6 +98,9 @@ python scripts/compose_report.py \
 
 # 按商标状态过滤
 python scripts/compose_report.py --enterprise "示例科技有限公司" --tm-status 商标已注册 --report-output output/tm_registered.html
+
+# 明细页数预算：默认仅 1 页；先按报告结论计划所需页数，再显式授权扩大
+python scripts/compose_report.py --enterprise "示例科技有限公司" --page-size 50 --max-pages 3 --report-output output/tm.html
 
 # 手动调单个工具
 python scripts/mcp_client.py call-tool \
