@@ -17,7 +17,7 @@
         "business-review.json": "e6bc84bef5dd3ee6e5196cdcaf4922351a479ab583d15d43b557ba5fb018f031",
         "browser-check.json": "b7a9f9e95cc961ffe687edd69de522aec61a079c2ce78c5296f2c54778551ae6"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/01-brand-portfolio.md"
+      "audit_record": "../test-records/live-replaced-20261027/01-brand-portfolio.md"
     },
     {
       "skill": "trademark-skill",
@@ -35,7 +35,7 @@
         "business-review.json": "761dfd74a4e92d5ce8ead0fdc2844a436a5f9cc596853406e9eea251ed9a395d",
         "browser-check.json": "2907804a52e528707d9fbdeb9659d39632d9c8a62825b351780623f1b38768bb"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/02-registered-marks.md"
+      "audit_record": "../test-records/live-replaced-20261027/02-registered-marks.md"
     },
     {
       "skill": "trademark-skill",
@@ -53,7 +53,7 @@
         "business-review.json": "51fef7a647d4f6a37f919582bfacb73314e8330a7e6738843e17717efb72fa39",
         "browser-check.json": "907ff0fd5d7def932b15e50d7c98c038f2e005625d91593a9e53c06ca4de14b1"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/03-pending-marks.md"
+      "audit_record": "../test-records/live-replaced-20261027/03-pending-marks.md"
     },
     {
       "skill": "trademark-skill",
@@ -71,7 +71,7 @@
         "business-review.json": "09828548a617cfc4783ec6781939730e731b3e6690d2013e967514e8af407db0",
         "browser-check.json": "b6c9acb63332ac274ef158d64a500cea869aae47547c98b16201185a2b922ee5"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/04-prelim-announcement.md"
+      "audit_record": "../test-records/live-replaced-20261027/04-prelim-announcement.md"
     },
     {
       "skill": "trademark-skill",
@@ -89,7 +89,7 @@
         "business-review.json": "a1c91a5c702a4ea991c9e3f3f56fa1adbe2a7d276958c16b94898307ebcfd0d8",
         "browser-check.json": "baf3fc79b3c3fd9f326031144ca62f5b9faa0b659bda621e184495032201b386"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/05-consumer-brand.md"
+      "audit_record": "../test-records/live-replaced-20261027/05-consumer-brand.md"
     },
     {
       "skill": "trademark-skill",
@@ -107,7 +107,7 @@
         "business-review.json": "5ffb3f78b3f300055b4cfa23c86080116dcbbcccfdf782912c92182d59e9ad72",
         "browser-check.json": "c84b7e86b1cb7319b9fe7e547ad3d8f023ef62c200a432550a17f0c3789dbd03"
       },
-      "audit_record": "../../test-records/live-replaced-20261027/07-small-sample.md"
+      "audit_record": "../test-records/live-replaced-20261027/07-small-sample.md"
     }
   ]
 }
