@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "skill": "trademark-skill",
+  "case_id": "01-brand-portfolio",
+  "title": "互联网企业商标组合评估",
+  "invocation_id": "1793069222560131000",
+  "provenance": {
+    "integrator_id": "683e574805537ace146cc05e",
+    "runner_sha256": "05777c2f2b0791cb5157aef691206606dade8df7af3b17212285b7ae74632a66",
+    "credential_policy_sha256": "bcabf08a1ca92f28357c0e57a8bae9bfa910eb1d4b204d8195ee3b7a77106eed",
+    "scenario_sha256": "211190c9137c53a58ba689bd6b796db76058b238b2cd584bbe276d4053e6bc2a",
+    "skill_source_hashes": {
+      "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+      "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+      "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+      "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+      "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+    },
+    "upstream_source_hashes": {
+      "trademark-mcp-server": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    },
+    "upstream_dependency_hashes": {
+      "trademark-mcp-server/server/mcp_server.py": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    }
+  },
+  "source_changed_during_run": false,
+  "started_at": "2026-10-27T10:47:02+08:00",
+  "elapsed_seconds": 12.468,
+  "returncode": 0,
+  "exception_type": null,
+  "command": "python3 trademark-skill/scripts/compose_report.py --enterprise '阿里巴巴（中国）有限公司' --page-size 10 --output trademark-skill/output/live-replaced-20261027/01-brand-portfolio/report.json --report-output trademark-skill/output/live-replaced-20261027/01-brand-portfolio/report.html",
+  "transport": "local MCP servers via loopback streamable-http",
+  "cache_used": false,
+  "call_count": 3,
+  "successful_data_calls": 3,
+  "empty_calls": 0,
+  "failed_calls": 0,
+  "checks": {
+    "issues": [],
+    "warnings": [],
+    "coverage_pct": 100,
+    "subject": {
+      "enterprise": "阿里巴巴（中国）有限公司",
+      "matchKeyword": "阿里巴巴（中国）有限公司",
+      "keywordType": "name",
+      "match_raw": "阿里巴巴（中国）有限公司",
+      "resolved": true,
+      "resolve_reason": "视为企业全称",
+      "searchKeywordType": "申请人",
+      "fuzzy_total": null,
+      "requires_confirmation": false,
+      "tmStatus": null
+    },
+    "title": "阿里巴巴（中国）有限公司 商标大数据报告",
+    "data_mode": null,
+    "metrics": [
+      {
+        "label": "商标总数",
+        "value": "8751",
+        "hint": "企业商标总量"
+      },
+      {
+        "label": "有效商标",
+        "value": "7319",
+        "hint": "当前有效商标数",
+        "delta": "有效率 84%"
+      },
+      {
+        "label": "无效商标",
+        "value": "1432",
+        "hint": "无效商标数"
+      },
+      {
+        "label": "近一年申请",
+        "value": "883",
+        "hint": "最近一年申请商标数"
+      },
+      {
+        "label": "类别覆盖",
+        "value": "45 类",
+        "hint": "涵盖商标类别数"
+      },
+      {
+        "label": "检索结果",
+        "value": "8751 条",
+        "hint": "本次检索命中商标条数"
+      },
+      {
+        "label": "同期注册/申请量比",
+        "value": "91%",
+        "hint": "报告期注册量/申请量（5294/5837），非同批成功率",
+        "delta": "申请 5837、注册 5294"
+      },
+      {
+        "label": "商标状态数",
+        "value": "1",
+        "hint": "不同商标状态数量"
+      }
+    ],
+    "quality_report": {
+      "total_sections": 6,
+      "populated_sections": 6,
+      "empty_sections": 0,
+      "coverage_pct": 100
+    },
+    "unregistered_tools": [],
+    "checks": {
+      "json_html_markdown": true,
+      "explicit_live": true,
+      "tool_calls_recorded": 3,
+      "offline_scripts": true,
+      "independent_rerender": true
+    }
+  },
+  "status": "passed",
+  "source_hashes": {
+    "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+    "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+    "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+    "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+    "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+  }
+}

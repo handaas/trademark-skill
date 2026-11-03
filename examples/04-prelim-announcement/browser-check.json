@@ -1,0 +1,53 @@
+{
+  "metric_overflows": [],
+  "document_title": "北京京东世纪贸易有限公司 商标大数据报告",
+  "title_matches": true,
+  "charts": 4,
+  "rendered_charts": 4,
+  "zero_size_charts": 0,
+  "chart_details": [
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 59
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 55
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 41
+    }
+  ],
+  "page_width": 1905,
+  "viewport_width": 1920,
+  "empty_headers": 0,
+  "script_errors": [],
+  "external_resources": 0,
+  "external_asset_references": 0,
+  "ok": true,
+  "report_html_sha256": "3005b0c304e973d8ffd959dd2df51c9c20a5062527c67c25552a3126f9f545c3",
+  "report_json_sha256": "2a8e499eaa92b150bfa556515bfbce2c05d22d992ffee391b02ef9925c65195d",
+  "skill": "trademark-skill",
+  "id": "04-prelim-announcement",
+  "browser": "Ego Lite",
+  "space_id": 4,
+  "offline": true,
+  "checked_at": "2026-10-27T03:04:25.818Z"
+}

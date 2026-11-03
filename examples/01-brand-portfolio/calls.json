@@ -1,0 +1,213 @@
+[
+  {
+    "tool": "trademark_bigdata_trademark_profile",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "阿里巴巴（中国）有限公司",
+      "keywordType": "name"
+    },
+    "invocation_id": "1793069222560131000",
+    "elapsed_seconds": 3.802,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "tmCount",
+      "tmInvalidNumber",
+      "tmNumberThisYear",
+      "tmTypeList",
+      "tmValidNumber",
+      "tmStatusList",
+      "tmStatusStat"
+    ],
+    "row_count": null,
+    "reported_total": null,
+    "numeric_evidence": [
+      {
+        "path": "tmCount",
+        "value": 8751
+      },
+      {
+        "path": "tmInvalidNumber",
+        "value": 1432
+      },
+      {
+        "path": "tmNumberThisYear",
+        "value": 883
+      },
+      {
+        "path": "tmValidNumber",
+        "value": 7319
+      },
+      {
+        "path": "tmStatusStat.初审公告",
+        "value": 516
+      },
+      {
+        "path": "tmStatusStat.商标其他情形",
+        "value": 10
+      },
+      {
+        "path": "tmStatusStat.商标已注册",
+        "value": 6509
+      },
+      {
+        "path": "tmStatusStat.商标异议中",
+        "value": 23
+      },
+      {
+        "path": "tmStatusStat.商标无效",
+        "value": 192
+      },
+      {
+        "path": "tmStatusStat.商标申请中",
+        "value": 11
+      },
+      {
+        "path": "tmStatusStat.撤销/无效宣告申请审查中",
+        "value": 148
+      },
+      {
+        "path": "tmStatusStat.等待实质审查",
+        "value": 706
+      },
+      {
+        "path": "tmStatusStat.驳回复审中",
+        "value": 629
+      }
+    ],
+    "response_sha256": "02814b5c7ae3ff9e552aca13a4436ce4f9ac1cbbd58847ef23bbcc10393aacb4"
+  },
+  {
+    "tool": "trademark_bigdata_trademark_stats",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "阿里巴巴（中国）有限公司",
+      "keywordType": "name"
+    },
+    "invocation_id": "1793069222560131000",
+    "elapsed_seconds": 4.189,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "tmAppTimeStat",
+      "tmRegTimeStat",
+      "tmTypeStats",
+      "tmStatusStat"
+    ],
+    "row_count": null,
+    "reported_total": null,
+    "numeric_evidence": [
+      {
+        "path": "tmAppTimeStat[0].count",
+        "value": 572
+      },
+      {
+        "path": "tmAppTimeStat[1].count",
+        "value": 244
+      },
+      {
+        "path": "tmAppTimeStat[2].count",
+        "value": 256
+      },
+      {
+        "path": "tmAppTimeStat[3].count",
+        "value": 285
+      },
+      {
+        "path": "tmAppTimeStat[4].count",
+        "value": 755
+      },
+      {
+        "path": "tmRegTimeStat[0].count",
+        "value": 466
+      },
+      {
+        "path": "tmRegTimeStat[1].count",
+        "value": 731
+      },
+      {
+        "path": "tmRegTimeStat[2].count",
+        "value": 358
+      },
+      {
+        "path": "tmRegTimeStat[3].count",
+        "value": 208
+      },
+      {
+        "path": "tmRegTimeStat[4].count",
+        "value": 445
+      },
+      {
+        "path": "tmTypeStats[0].count",
+        "value": 1269
+      },
+      {
+        "path": "tmTypeStats[1].count",
+        "value": 1224
+      },
+      {
+        "path": "tmTypeStats[2].count",
+        "value": 1173
+      },
+      {
+        "path": "tmTypeStats[3].count",
+        "value": 817
+      },
+      {
+        "path": "tmTypeStats[4].count",
+        "value": 733
+      },
+      {
+        "path": "tmStatusStat[0].count",
+        "value": 729
+      },
+      {
+        "path": "tmStatusStat[1].count",
+        "value": 514
+      },
+      {
+        "path": "tmStatusStat[2].count",
+        "value": 605
+      },
+      {
+        "path": "tmStatusStat[3].count",
+        "value": 6509
+      },
+      {
+        "path": "tmStatusStat[4].count",
+        "value": 192
+      }
+    ],
+    "response_sha256": "9fcb76207fdefadf406710a3feb9c4907eee5f158c20cc9797c85d2a7d7ec2e4"
+  },
+  {
+    "tool": "trademark_bigdata_trademark_search",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "阿里巴巴（中国）有限公司",
+      "keywordType": "申请人",
+      "pageIndex": 1,
+      "pageSize": 10
+    },
+    "invocation_id": "1793069222560131000",
+    "elapsed_seconds": 4.335,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "resultList",
+      "total"
+    ],
+    "row_count": 10,
+    "reported_total": 8751,
+    "numeric_evidence": [
+      {
+        "path": "total",
+        "value": 8751
+      }
+    ],
+    "response_sha256": "b2798e98a0a51c5c989a5743bc50807a30769755b2bbd503b7a9a183aa21af9b"
+  }
+]

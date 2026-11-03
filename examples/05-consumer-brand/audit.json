@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "skill": "trademark-skill",
+  "case_id": "05-consumer-brand",
+  "title": "白酒品牌商标结构",
+  "invocation_id": "1793069235174829000",
+  "provenance": {
+    "integrator_id": "683e574805537ace146cc05e",
+    "runner_sha256": "05777c2f2b0791cb5157aef691206606dade8df7af3b17212285b7ae74632a66",
+    "credential_policy_sha256": "bcabf08a1ca92f28357c0e57a8bae9bfa910eb1d4b204d8195ee3b7a77106eed",
+    "scenario_sha256": "dc9d9c0ee932f52172e7785434210bdd4f221c99ee40292be8708f3102187ba2",
+    "skill_source_hashes": {
+      "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+      "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+      "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+      "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+      "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+    },
+    "upstream_source_hashes": {
+      "trademark-mcp-server": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    },
+    "upstream_dependency_hashes": {
+      "trademark-mcp-server/server/mcp_server.py": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    }
+  },
+  "source_changed_during_run": false,
+  "started_at": "2026-10-27T10:47:15+08:00",
+  "elapsed_seconds": 5.161,
+  "returncode": 0,
+  "exception_type": null,
+  "command": "python3 trademark-skill/scripts/compose_report.py --enterprise '贵州茅台酒股份有限公司' --page-size 10 --output trademark-skill/output/live-replaced-20261027/05-consumer-brand/report.json --report-output trademark-skill/output/live-replaced-20261027/05-consumer-brand/report.html",
+  "transport": "local MCP servers via loopback streamable-http",
+  "cache_used": false,
+  "call_count": 3,
+  "successful_data_calls": 3,
+  "empty_calls": 0,
+  "failed_calls": 0,
+  "checks": {
+    "issues": [],
+    "warnings": [],
+    "coverage_pct": 100,
+    "subject": {
+      "enterprise": "贵州茅台酒股份有限公司",
+      "matchKeyword": "贵州茅台酒股份有限公司",
+      "keywordType": "name",
+      "match_raw": "贵州茅台酒股份有限公司",
+      "resolved": true,
+      "resolve_reason": "视为企业全称",
+      "searchKeywordType": "申请人",
+      "fuzzy_total": null,
+      "requires_confirmation": false,
+      "tmStatus": null
+    },
+    "title": "贵州茅台酒股份有限公司 商标大数据报告",
+    "data_mode": null,
+    "metrics": [
+      {
+        "label": "商标总数",
+        "value": "89",
+        "hint": "企业商标总量"
+      },
+      {
+        "label": "有效商标",
+        "value": "33",
+        "hint": "当前有效商标数",
+        "delta": "有效率 37%"
+      },
+      {
+        "label": "无效商标",
+        "value": "56",
+        "hint": "无效商标数"
+      },
+      {
+        "label": "近一年申请",
+        "value": "38",
+        "hint": "最近一年申请商标数"
+      },
+      {
+        "label": "类别覆盖",
+        "value": "6 类",
+        "hint": "涵盖商标类别数"
+      },
+      {
+        "label": "检索结果",
+        "value": "89 条",
+        "hint": "本次检索命中商标条数"
+      },
+      {
+        "label": "同期注册/申请量比",
+        "value": "34%",
+        "hint": "报告期注册量/申请量（27/80），非同批成功率",
+        "delta": "申请 80、注册 27"
+      },
+      {
+        "label": "商标状态数",
+        "value": "3",
+        "hint": "不同商标状态数量"
+      }
+    ],
+    "quality_report": {
+      "total_sections": 6,
+      "populated_sections": 6,
+      "empty_sections": 0,
+      "coverage_pct": 100
+    },
+    "unregistered_tools": [],
+    "checks": {
+      "json_html_markdown": true,
+      "explicit_live": true,
+      "tool_calls_recorded": 3,
+      "offline_scripts": true,
+      "independent_rerender": true,
+      "offline_browser": true
+    }
+  },
+  "status": "passed",
+  "source_hashes": {
+    "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+    "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+    "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+    "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+    "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+  },
+  "technical_status": "passed",
+  "audited_at": "2026-10-27T11:13:04+08:00",
+  "evidence_binding": {
+    "report.json": "cb1417df55cb433ad96d329c22da68cc825d7d1d9a34ed07d3da2df4f8961077",
+    "report.html": "c3c062415e65dd08029873aab8287cd0ecffd5fbcd59d4edc6b618849ca8b5db",
+    "report.md": "b647cda33b33c7d8bb6562f4a723db5dee90d2f861b56fd1d5a71d9aa62a2e27",
+    "calls.json": "bea339f7ffec4e4034e0ab6b1499d951479ebb8ac191a9de79aebff787386b3a",
+    "result.json": "a3b7644d93be38adbe99374d620f4e90a77dc632a0f6eeec3bd4afdeaaa5ead0",
+    "source_manifest_sha256": "014e0c39ccd221d4b037bfafc75dc705b73521da54c003be18fa8ca62d4dab92"
+  }
+}

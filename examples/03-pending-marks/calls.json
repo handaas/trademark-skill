@@ -1,0 +1,214 @@
+[
+  {
+    "tool": "trademark_bigdata_trademark_profile",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "小米科技有限责任公司",
+      "keywordType": "name"
+    },
+    "invocation_id": "1793069223589803000",
+    "elapsed_seconds": 6.591,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "tmCount",
+      "tmInvalidNumber",
+      "tmNumberThisYear",
+      "tmTypeList",
+      "tmValidNumber",
+      "tmStatusList",
+      "tmStatusStat"
+    ],
+    "row_count": null,
+    "reported_total": null,
+    "numeric_evidence": [
+      {
+        "path": "tmCount",
+        "value": 19610
+      },
+      {
+        "path": "tmInvalidNumber",
+        "value": 3329
+      },
+      {
+        "path": "tmNumberThisYear",
+        "value": 353
+      },
+      {
+        "path": "tmValidNumber",
+        "value": 16269
+      },
+      {
+        "path": "tmStatusStat.初审公告",
+        "value": 672
+      },
+      {
+        "path": "tmStatusStat.商标其他情形",
+        "value": 10
+      },
+      {
+        "path": "tmStatusStat.商标已注册",
+        "value": 14040
+      },
+      {
+        "path": "tmStatusStat.商标异议中",
+        "value": 31
+      },
+      {
+        "path": "tmStatusStat.商标无效",
+        "value": 2128
+      },
+      {
+        "path": "tmStatusStat.商标申请中",
+        "value": 23
+      },
+      {
+        "path": "tmStatusStat.撤销/无效宣告申请审查中",
+        "value": 204
+      },
+      {
+        "path": "tmStatusStat.等待实质审查",
+        "value": 1451
+      },
+      {
+        "path": "tmStatusStat.驳回复审中",
+        "value": 1039
+      }
+    ],
+    "response_sha256": "6d65a165ad03dd4a6c04e3a62d36ad33c6319858a438c4e6ace601137e32af57"
+  },
+  {
+    "tool": "trademark_bigdata_trademark_stats",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "小米科技有限责任公司",
+      "keywordType": "name"
+    },
+    "invocation_id": "1793069223589803000",
+    "elapsed_seconds": 1.222,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "tmAppTimeStat",
+      "tmRegTimeStat",
+      "tmTypeStats",
+      "tmStatusStat"
+    ],
+    "row_count": null,
+    "reported_total": null,
+    "numeric_evidence": [
+      {
+        "path": "tmAppTimeStat[0].count",
+        "value": 1032
+      },
+      {
+        "path": "tmAppTimeStat[1].count",
+        "value": 2733
+      },
+      {
+        "path": "tmAppTimeStat[2].count",
+        "value": 1120
+      },
+      {
+        "path": "tmAppTimeStat[3].count",
+        "value": 2365
+      },
+      {
+        "path": "tmAppTimeStat[4].count",
+        "value": 3990
+      },
+      {
+        "path": "tmRegTimeStat[0].count",
+        "value": 174
+      },
+      {
+        "path": "tmRegTimeStat[1].count",
+        "value": 661
+      },
+      {
+        "path": "tmRegTimeStat[2].count",
+        "value": 2044
+      },
+      {
+        "path": "tmRegTimeStat[3].count",
+        "value": 1309
+      },
+      {
+        "path": "tmRegTimeStat[4].count",
+        "value": 2299
+      },
+      {
+        "path": "tmTypeStats[0].count",
+        "value": 2888
+      },
+      {
+        "path": "tmTypeStats[1].count",
+        "value": 1678
+      },
+      {
+        "path": "tmTypeStats[2].count",
+        "value": 1643
+      },
+      {
+        "path": "tmTypeStats[3].count",
+        "value": 1076
+      },
+      {
+        "path": "tmTypeStats[4].count",
+        "value": 874
+      },
+      {
+        "path": "tmStatusStat[0].count",
+        "value": 13972
+      },
+      {
+        "path": "tmStatusStat[1].count",
+        "value": 1029
+      },
+      {
+        "path": "tmStatusStat[2].count",
+        "value": 2102
+      },
+      {
+        "path": "tmStatusStat[3].count",
+        "value": 678
+      },
+      {
+        "path": "tmStatusStat[4].count",
+        "value": 1421
+      }
+    ],
+    "response_sha256": "2682d5324bf95d9370f8cb39042c613bfbbea8b92208403af4ebad1c8f6da40f"
+  },
+  {
+    "tool": "trademark_bigdata_trademark_search",
+    "domain": null,
+    "arguments": {
+      "matchKeyword": "小米科技有限责任公司",
+      "keywordType": "申请人",
+      "pageIndex": 1,
+      "pageSize": 8,
+      "tmStatus": "商标申请中"
+    },
+    "invocation_id": "1793069223589803000",
+    "elapsed_seconds": 3.534,
+    "status": "data",
+    "error_category": null,
+    "result_type": "dict",
+    "top_level_fields": [
+      "resultList",
+      "total"
+    ],
+    "row_count": 8,
+    "reported_total": 22,
+    "numeric_evidence": [
+      {
+        "path": "total",
+        "value": 22
+      }
+    ],
+    "response_sha256": "6dbecd8b9163eb2a18110e9fc31d3160c24add8e8ad596b57b275fd1af8570f6"
+  }
+]

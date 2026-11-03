@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "skill": "trademark-skill",
+  "case_id": "01-brand-portfolio",
+  "title": "互联网企业商标组合评估",
+  "invocation_id": "1793069222560131000",
+  "provenance": {
+    "integrator_id": "683e574805537ace146cc05e",
+    "runner_sha256": "05777c2f2b0791cb5157aef691206606dade8df7af3b17212285b7ae74632a66",
+    "credential_policy_sha256": "bcabf08a1ca92f28357c0e57a8bae9bfa910eb1d4b204d8195ee3b7a77106eed",
+    "scenario_sha256": "211190c9137c53a58ba689bd6b796db76058b238b2cd584bbe276d4053e6bc2a",
+    "skill_source_hashes": {
+      "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+      "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+      "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+      "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+      "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+    },
+    "upstream_source_hashes": {
+      "trademark-mcp-server": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    },
+    "upstream_dependency_hashes": {
+      "trademark-mcp-server/server/mcp_server.py": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    }
+  },
+  "source_changed_during_run": false,
+  "started_at": "2026-10-27T10:47:02+08:00",
+  "elapsed_seconds": 12.468,
+  "returncode": 0,
+  "exception_type": null,
+  "command": "python3 trademark-skill/scripts/compose_report.py --enterprise '阿里巴巴（中国）有限公司' --page-size 10 --output trademark-skill/output/live-replaced-20261027/01-brand-portfolio/report.json --report-output trademark-skill/output/live-replaced-20261027/01-brand-portfolio/report.html",
+  "transport": "local MCP servers via loopback streamable-http",
+  "cache_used": false,
+  "call_count": 3,
+  "successful_data_calls": 3,
+  "empty_calls": 0,
+  "failed_calls": 0,
+  "checks": {
+    "issues": [],
+    "warnings": [],
+    "coverage_pct": 100,
+    "subject": {
+      "enterprise": "阿里巴巴（中国）有限公司",
+      "matchKeyword": "阿里巴巴（中国）有限公司",
+      "keywordType": "name",
+      "match_raw": "阿里巴巴（中国）有限公司",
+      "resolved": true,
+      "resolve_reason": "视为企业全称",
+      "searchKeywordType": "申请人",
+      "fuzzy_total": null,
+      "requires_confirmation": false,
+      "tmStatus": null
+    },
+    "title": "阿里巴巴（中国）有限公司 商标大数据报告",
+    "data_mode": null,
+    "metrics": [
+      {
+        "label": "商标总数",
+        "value": "8751",
+        "hint": "企业商标总量"
+      },
+      {
+        "label": "有效商标",
+        "value": "7319",
+        "hint": "当前有效商标数",
+        "delta": "有效率 84%"
+      },
+      {
+        "label": "无效商标",
+        "value": "1432",
+        "hint": "无效商标数"
+      },
+      {
+        "label": "近一年申请",
+        "value": "883",
+        "hint": "最近一年申请商标数"
+      },
+      {
+        "label": "类别覆盖",
+        "value": "45 类",
+        "hint": "涵盖商标类别数"
+      },
+      {
+        "label": "检索结果",
+        "value": "8751 条",
+        "hint": "本次检索命中商标条数"
+      },
+      {
+        "label": "同期注册/申请量比",
+        "value": "91%",
+        "hint": "报告期注册量/申请量（5294/5837），非同批成功率",
+        "delta": "申请 5837、注册 5294"
+      },
+      {
+        "label": "商标状态数",
+        "value": "1",
+        "hint": "不同商标状态数量"
+      }
+    ],
+    "quality_report": {
+      "total_sections": 6,
+      "populated_sections": 6,
+      "empty_sections": 0,
+      "coverage_pct": 100
+    },
+    "unregistered_tools": [],
+    "checks": {
+      "json_html_markdown": true,
+      "explicit_live": true,
+      "tool_calls_recorded": 3,
+      "offline_scripts": true,
+      "independent_rerender": true,
+      "offline_browser": true
+    }
+  },
+  "status": "passed",
+  "source_hashes": {
+    "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+    "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+    "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+    "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+    "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+  },
+  "technical_status": "passed",
+  "audited_at": "2026-10-27T11:13:04+08:00",
+  "evidence_binding": {
+    "report.json": "9b5e593c45fd2cfbc9b1395b534ed714d2e747b674bd08756716671cb2e9fc2f",
+    "report.html": "dd6f3ef708a139c1464e85285b0e77907af77a167da73375a700ae80e77bf0e4",
+    "report.md": "9fa8999fea854cb1dd206afd4e6155572cd1557023e61e52bcb10d77926dd4ac",
+    "calls.json": "12a13dce0024d2bdcc620e94c4a59d2e99e83b73be746bdcbc3e95c5cbcf93f5",
+    "result.json": "d1284241e6accffd2cff93e3fbb92a875be6d15f2247c8c4ba50ae5890103ef8",
+    "source_manifest_sha256": "014e0c39ccd221d4b037bfafc75dc705b73521da54c003be18fa8ca62d4dab92"
+  },
+  "business_review": {
+    "id": "01-brand-portfolio",
+    "verdict": "acceptable",
+    "summary": "已重新读取并绑定本轮正式产物；总量、类别、状态与年份趋势均分列，名称/申请号未混淆。",
+    "checks": [
+      {
+        "expectation": "商标总量、类别分布和状态分布应区分",
+        "status": "pass",
+        "evidence": "针对“商标总量、类别分布和状态分布应区分”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=dd6f3ef708a1）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"阿里巴巴（中国）有限公司\",\"matchKeyword\":\"阿里巴巴（中国）有限公司\",\"keywordType\":\"name\",\"match_raw\":\"阿里巴巴（中国）有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":null}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":10,\"total\":8751}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":10}]；指标=[{\"label\":\"商标总数\",\"value\":\"8751\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"7319\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 84%\"},{\"label\":\"无效商标\",\"value\":\"1432\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"883\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"8751 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"91%\",\"hint\":\"报告期注册量/申请量（5294/5837），非同批成功率\",\"delta\":\"申请 5837、注册 5294\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"8751\",\"有效商标数\":\"7319\",\"无效商标数\":\"1432\",\"近一年申请数\":\"883\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"572\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"466\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"等待实质审查\",\"数量\":\"729\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"1269\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"淘美眉\",\"申请号\":\"9999614\",\"申请人\":\"阿里巴巴（中国）有限公司\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"注册日期\":\"2013-01-07\",\"商标状态\":\"商标已注册\",\"代理机构\":\"杭州海浩商标事务所有限公司\"}}]；代表记录=[{\"商标名称\":\"淘美眉\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"41-教育娱乐\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"38-通讯服务\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 8751 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 7319、无效商标 1432。（有效率 84%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 40%，前 3 类合计 69%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 74%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2025”（1112 件），近年趋势下降 21%，同比 -21%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2026”（817 件），近年上升 25%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      },
+      {
+        "expectation": "申请趋势按源数据年份呈现",
+        "status": "pass",
+        "evidence": "针对“申请趋势按源数据年份呈现”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=dd6f3ef708a1）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"阿里巴巴（中国）有限公司\",\"matchKeyword\":\"阿里巴巴（中国）有限公司\",\"keywordType\":\"name\",\"match_raw\":\"阿里巴巴（中国）有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":null}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":10,\"total\":8751}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":10}]；指标=[{\"label\":\"商标总数\",\"value\":\"8751\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"7319\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 84%\"},{\"label\":\"无效商标\",\"value\":\"1432\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"883\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"8751 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"91%\",\"hint\":\"报告期注册量/申请量（5294/5837），非同批成功率\",\"delta\":\"申请 5837、注册 5294\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"8751\",\"有效商标数\":\"7319\",\"无效商标数\":\"1432\",\"近一年申请数\":\"883\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"572\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"466\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"等待实质审查\",\"数量\":\"729\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"1269\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"淘美眉\",\"申请号\":\"9999614\",\"申请人\":\"阿里巴巴（中国）有限公司\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"注册日期\":\"2013-01-07\",\"商标状态\":\"商标已注册\",\"代理机构\":\"杭州海浩商标事务所有限公司\"}}]；代表记录=[{\"商标名称\":\"淘美眉\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"41-教育娱乐\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"38-通讯服务\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 8751 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 7319、无效商标 1432。（有效率 84%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 40%，前 3 类合计 69%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 74%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2025”（1112 件），近年趋势下降 21%，同比 -21%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2026”（817 件），近年上升 25%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      },
+      {
+        "expectation": "商标名称和注册号字段不得混淆",
+        "status": "pass",
+        "evidence": "针对“商标名称和注册号字段不得混淆”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=dd6f3ef708a1）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"阿里巴巴（中国）有限公司\",\"matchKeyword\":\"阿里巴巴（中国）有限公司\",\"keywordType\":\"name\",\"match_raw\":\"阿里巴巴（中国）有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":null}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":10,\"total\":8751}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":10}]；指标=[{\"label\":\"商标总数\",\"value\":\"8751\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"7319\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 84%\"},{\"label\":\"无效商标\",\"value\":\"1432\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"883\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"8751 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"91%\",\"hint\":\"报告期注册量/申请量（5294/5837），非同批成功率\",\"delta\":\"申请 5837、注册 5294\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"8751\",\"有效商标数\":\"7319\",\"无效商标数\":\"1432\",\"近一年申请数\":\"883\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"572\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"466\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"等待实质审查\",\"数量\":\"729\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"1269\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"淘美眉\",\"申请号\":\"9999614\",\"申请人\":\"阿里巴巴（中国）有限公司\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"注册日期\":\"2013-01-07\",\"商标状态\":\"商标已注册\",\"代理机构\":\"杭州海浩商标事务所有限公司\"}}]；代表记录=[{\"商标名称\":\"淘美眉\",\"国际分类\":\"42-设计研究\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"41-教育娱乐\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"},{\"商标名称\":\"淘美眉\",\"国际分类\":\"38-通讯服务\",\"申请日期\":\"2011-09-23\",\"商标状态\":\"商标已注册\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 8751 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 7319、无效商标 1432。（有效率 84%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 40%，前 3 类合计 69%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 74%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2025”（1112 件），近年趋势下降 21%，同比 -21%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2026”（817 件），近年上升 25%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      }
+    ],
+    "issues": [],
+    "evidence_binding": {
+      "report.json": "9b5e593c45fd2cfbc9b1395b534ed714d2e747b674bd08756716671cb2e9fc2f",
+      "report.html": "dd6f3ef708a139c1464e85285b0e77907af77a167da73375a700ae80e77bf0e4",
+      "report.md": "9fa8999fea854cb1dd206afd4e6155572cd1557023e61e52bcb10d77926dd4ac",
+      "calls.json": "12a13dce0024d2bdcc620e94c4a59d2e99e83b73be746bdcbc3e95c5cbcf93f5",
+      "result.json": "d1284241e6accffd2cff93e3fbb92a875be6d15f2247c8c4ba50ae5890103ef8",
+      "source_manifest_sha256": "014e0c39ccd221d4b037bfafc75dc705b73521da54c003be18fa8ca62d4dab92"
+    }
+  }
+}

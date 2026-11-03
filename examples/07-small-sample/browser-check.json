@@ -1,0 +1,53 @@
+{
+  "metric_overflows": [],
+  "document_title": "比亚迪股份有限公司 商标大数据报告",
+  "title_matches": true,
+  "charts": 4,
+  "rendered_charts": 4,
+  "zero_size_charts": 0,
+  "chart_details": [
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 55
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 43
+    }
+  ],
+  "page_width": 1905,
+  "viewport_width": 1920,
+  "empty_headers": 0,
+  "script_errors": [],
+  "external_resources": 0,
+  "external_asset_references": 0,
+  "ok": true,
+  "report_html_sha256": "c8badaf066bd774b397b8944084b6aa66128bace3eb0c36758abceb446340e2b",
+  "report_json_sha256": "f511f4f14680e7f7a89b514b02bb19616ecb7154457e1c3f1e27e2bbd43ca571",
+  "skill": "trademark-skill",
+  "id": "07-small-sample",
+  "browser": "Ego Lite",
+  "space_id": 4,
+  "offline": true,
+  "checked_at": "2026-10-27T03:04:28.858Z"
+}

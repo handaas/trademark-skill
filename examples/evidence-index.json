@@ -1,0 +1,113 @@
+{
+  "run_id": "live-replaced-20261027",
+  "cases": [
+    {
+      "skill": "trademark-skill",
+      "id": "01-brand-portfolio",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "9b5e593c45fd2cfbc9b1395b534ed714d2e747b674bd08756716671cb2e9fc2f",
+        "report.html": "dd6f3ef708a139c1464e85285b0e77907af77a167da73375a700ae80e77bf0e4",
+        "report.md": "9fa8999fea854cb1dd206afd4e6155572cd1557023e61e52bcb10d77926dd4ac",
+        "calls.json": "12a13dce0024d2bdcc620e94c4a59d2e99e83b73be746bdcbc3e95c5cbcf93f5",
+        "result.json": "d1284241e6accffd2cff93e3fbb92a875be6d15f2247c8c4ba50ae5890103ef8",
+        "audit.json": "e4d363320b882aa302815f49153eae8d86f5aca09e03e61c940a5b580ea51acc",
+        "acceptance.json": "3f92d0064a1be4b4f4c6e3a03715cb429f9c3bd6db131bda55fce4735e601ff6",
+        "business-review.json": "e6bc84bef5dd3ee6e5196cdcaf4922351a479ab583d15d43b557ba5fb018f031",
+        "browser-check.json": "b7a9f9e95cc961ffe687edd69de522aec61a079c2ce78c5296f2c54778551ae6"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/01-brand-portfolio.md"
+    },
+    {
+      "skill": "trademark-skill",
+      "id": "02-registered-marks",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "aaebc861dc9744961c5c8d4e51ac9cf7360ceb51578ce2babdc5f6469f37b2e9",
+        "report.html": "d0daeb458c4cb5c7c77bb5fb0bdd55a77d8a1ff3fe7cb04465a4f121156dba5b",
+        "report.md": "5c86ebad83ae9be749a29659fc8179d206bdeadc28a8a69d097a9d3acfddbbb0",
+        "calls.json": "e876b0f0d737487cde05aae8a809d1912033cec2720f869ef1ebc5a0f8df8bee",
+        "result.json": "0c4f5f853347794192c9d040f1d95c19e785adad82660668f67f3bad2ed47aef",
+        "audit.json": "3d9a5bc9f156802db659dd965f36cc188991ccf2864af38eab4c935dbf1bcdd6",
+        "acceptance.json": "1e37dd83b451612572aec4c4e580ffa68e31ac6f21519ea81ba275e35a27d1ab",
+        "business-review.json": "761dfd74a4e92d5ce8ead0fdc2844a436a5f9cc596853406e9eea251ed9a395d",
+        "browser-check.json": "2907804a52e528707d9fbdeb9659d39632d9c8a62825b351780623f1b38768bb"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/02-registered-marks.md"
+    },
+    {
+      "skill": "trademark-skill",
+      "id": "03-pending-marks",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "49d70c83870e9ef0927ca35deff2260fc2c502f289533dd985d8f11f45b550db",
+        "report.html": "3e132ebe4af76f98d0bd91faef0c2e110d8b20c9666cda8322701618f3252819",
+        "report.md": "61a203b3c7f9d475ab2a1f332373f7bd01dc7f0cffa803c7395cd42ec6c750c7",
+        "calls.json": "771160092a53ee80e6c50912195d0956bd286e064a66bfdaa1df8b077f062632",
+        "result.json": "aee4741431fa1f4e38ef777bc213b805029ad148985ae02355145a0c691ae9a4",
+        "audit.json": "c61f2b4a98efc4444ef2614bf601d17900c0009ab36f916cfb98dff30443859a",
+        "acceptance.json": "f59ec182238fdc9da8eefef7c5adc3e8eb6d767d2ffebc30b572af1f7bb293bb",
+        "business-review.json": "51fef7a647d4f6a37f919582bfacb73314e8330a7e6738843e17717efb72fa39",
+        "browser-check.json": "907ff0fd5d7def932b15e50d7c98c038f2e005625d91593a9e53c06ca4de14b1"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/03-pending-marks.md"
+    },
+    {
+      "skill": "trademark-skill",
+      "id": "04-prelim-announcement",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "2a8e499eaa92b150bfa556515bfbce2c05d22d992ffee391b02ef9925c65195d",
+        "report.html": "3005b0c304e973d8ffd959dd2df51c9c20a5062527c67c25552a3126f9f545c3",
+        "report.md": "11a7bf001193106a6ac795b265ee2671f8bf779e81bc2e8a6b0ae380d0bd35d2",
+        "calls.json": "93a3a4a6d5971d9977e945a9808e7c7c9283b3ed4c603d38ec237c6e2103a3a9",
+        "result.json": "ca14352d794a58bace7285bb8e9928229b2d4cf42d62b8eb191320ace0fca4ad",
+        "audit.json": "c13cefa521d40065179ad71b22aa0e535a567ffe5750cb6fc804362034fbb7c8",
+        "acceptance.json": "ea64f309daa63b402036145f11e5f5c554e76f2fbe961651ff551b03e1039ae7",
+        "business-review.json": "09828548a617cfc4783ec6781939730e731b3e6690d2013e967514e8af407db0",
+        "browser-check.json": "b6c9acb63332ac274ef158d64a500cea869aae47547c98b16201185a2b922ee5"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/04-prelim-announcement.md"
+    },
+    {
+      "skill": "trademark-skill",
+      "id": "05-consumer-brand",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "cb1417df55cb433ad96d329c22da68cc825d7d1d9a34ed07d3da2df4f8961077",
+        "report.html": "c3c062415e65dd08029873aab8287cd0ecffd5fbcd59d4edc6b618849ca8b5db",
+        "report.md": "b647cda33b33c7d8bb6562f4a723db5dee90d2f861b56fd1d5a71d9aa62a2e27",
+        "calls.json": "bea339f7ffec4e4034e0ab6b1499d951479ebb8ac191a9de79aebff787386b3a",
+        "result.json": "a3b7644d93be38adbe99374d620f4e90a77dc632a0f6eeec3bd4afdeaaa5ead0",
+        "audit.json": "35ab23f3da6ff9f3374c2cffa6525e8bc29725dbad2a4c917b371d2e9b4de6a9",
+        "acceptance.json": "69f69a6e0074fcbf5dad39797dec0077e2bcefd993f13a3c665566aa0ede9329",
+        "business-review.json": "a1c91a5c702a4ea991c9e3f3f56fa1adbe2a7d276958c16b94898307ebcfd0d8",
+        "browser-check.json": "baf3fc79b3c3fd9f326031144ca62f5b9faa0b659bda621e184495032201b386"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/05-consumer-brand.md"
+    },
+    {
+      "skill": "trademark-skill",
+      "id": "07-small-sample",
+      "status": "passed",
+      "positive_business_pass": true,
+      "files_sha256": {
+        "report.json": "f511f4f14680e7f7a89b514b02bb19616ecb7154457e1c3f1e27e2bbd43ca571",
+        "report.html": "c8badaf066bd774b397b8944084b6aa66128bace3eb0c36758abceb446340e2b",
+        "report.md": "5e7e92c6d2b9be203f467932cfb91f1a6962ef1352374a9454c4264b5edec30d",
+        "calls.json": "b2b2f6eca0b85313e180e7b9a506f878064ba5a3d1ac13418b8ec8f325fc7db6",
+        "result.json": "0428c7782c90ab70292066a2cc0845139ba781b80cf9313565a55777de91b7b7",
+        "audit.json": "9c6325c66ab19338b1054afbb0e522e7d809e6bd40dde8beb17b1c4413501e1e",
+        "acceptance.json": "7a601f686d753761821cc88f069ac443129133764423aa42ac836036434d0bdc",
+        "business-review.json": "5ffb3f78b3f300055b4cfa23c86080116dcbbcccfdf782912c92182d59e9ad72",
+        "browser-check.json": "c84b7e86b1cb7319b9fe7e547ad3d8f023ef62c200a432550a17f0c3789dbd03"
+      },
+      "audit_record": "../../test-records/live-replaced-20261027/07-small-sample.md"
+    }
+  ]
+}

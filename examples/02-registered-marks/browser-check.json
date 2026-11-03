@@ -1,0 +1,53 @@
+{
+  "metric_overflows": [],
+  "document_title": "华为技术有限公司 商标大数据报告",
+  "title_matches": true,
+  "charts": 4,
+  "rendered_charts": 4,
+  "zero_size_charts": 0,
+  "chart_details": [
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 63
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 55
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 39
+    }
+  ],
+  "page_width": 1905,
+  "viewport_width": 1920,
+  "empty_headers": 0,
+  "script_errors": [],
+  "external_resources": 0,
+  "external_asset_references": 0,
+  "ok": true,
+  "report_html_sha256": "d0daeb458c4cb5c7c77bb5fb0bdd55a77d8a1ff3fe7cb04465a4f121156dba5b",
+  "report_json_sha256": "aaebc861dc9744961c5c8d4e51ac9cf7360ceb51578ce2babdc5f6469f37b2e9",
+  "skill": "trademark-skill",
+  "id": "02-registered-marks",
+  "browser": "Ego Lite",
+  "space_id": 4,
+  "offline": true,
+  "checked_at": "2026-10-27T03:04:22.998Z"
+}

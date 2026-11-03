@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "skill": "trademark-skill",
+  "case_id": "04-prelim-announcement",
+  "title": "初审公告商标监测",
+  "invocation_id": "1793069223623845000",
+  "provenance": {
+    "integrator_id": "683e574805537ace146cc05e",
+    "runner_sha256": "05777c2f2b0791cb5157aef691206606dade8df7af3b17212285b7ae74632a66",
+    "credential_policy_sha256": "bcabf08a1ca92f28357c0e57a8bae9bfa910eb1d4b204d8195ee3b7a77106eed",
+    "scenario_sha256": "c05c5c2c74d96f7a8336969cb3da3e96838dc7f6914955006c319178516137c8",
+    "skill_source_hashes": {
+      "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+      "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+      "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+      "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+      "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+    },
+    "upstream_source_hashes": {
+      "trademark-mcp-server": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    },
+    "upstream_dependency_hashes": {
+      "trademark-mcp-server/server/mcp_server.py": "8540e21cd293a850b8a1fe2fcbe8ede0d125ef7b41fb30296fd961975c4462d8"
+    }
+  },
+  "source_changed_during_run": false,
+  "started_at": "2026-10-27T10:47:03+08:00",
+  "elapsed_seconds": 12.698,
+  "returncode": 0,
+  "exception_type": null,
+  "command": "python3 trademark-skill/scripts/compose_report.py --enterprise '北京京东世纪贸易有限公司' --tm-status '初审公告' --page-size 8 --output trademark-skill/output/live-replaced-20261027/04-prelim-announcement/report.json --report-output trademark-skill/output/live-replaced-20261027/04-prelim-announcement/report.html",
+  "transport": "local MCP servers via loopback streamable-http",
+  "cache_used": false,
+  "call_count": 3,
+  "successful_data_calls": 3,
+  "empty_calls": 0,
+  "failed_calls": 0,
+  "checks": {
+    "issues": [],
+    "warnings": [],
+    "coverage_pct": 100,
+    "subject": {
+      "enterprise": "北京京东世纪贸易有限公司",
+      "matchKeyword": "北京京东世纪贸易有限公司",
+      "keywordType": "name",
+      "match_raw": "北京京东世纪贸易有限公司",
+      "resolved": true,
+      "resolve_reason": "视为企业全称",
+      "searchKeywordType": "申请人",
+      "fuzzy_total": null,
+      "requires_confirmation": false,
+      "tmStatus": "初审公告"
+    },
+    "title": "北京京东世纪贸易有限公司 商标大数据报告",
+    "data_mode": null,
+    "metrics": [
+      {
+        "label": "商标总数",
+        "value": "2916",
+        "hint": "企业商标总量"
+      },
+      {
+        "label": "有效商标",
+        "value": "2357",
+        "hint": "当前有效商标数",
+        "delta": "有效率 81%"
+      },
+      {
+        "label": "无效商标",
+        "value": "559",
+        "hint": "无效商标数"
+      },
+      {
+        "label": "近一年申请",
+        "value": "21",
+        "hint": "最近一年申请商标数"
+      },
+      {
+        "label": "类别覆盖",
+        "value": "45 类",
+        "hint": "涵盖商标类别数"
+      },
+      {
+        "label": "检索结果",
+        "value": "118 条",
+        "hint": "本次检索命中商标条数"
+      },
+      {
+        "label": "同期注册/申请量比",
+        "value": "97%",
+        "hint": "报告期注册量/申请量（1988/2051），非同批成功率",
+        "delta": "申请 2051、注册 1988"
+      },
+      {
+        "label": "商标状态数",
+        "value": "1",
+        "hint": "不同商标状态数量"
+      }
+    ],
+    "quality_report": {
+      "total_sections": 6,
+      "populated_sections": 6,
+      "empty_sections": 0,
+      "coverage_pct": 100
+    },
+    "unregistered_tools": [],
+    "checks": {
+      "json_html_markdown": true,
+      "explicit_live": true,
+      "tool_calls_recorded": 3,
+      "offline_scripts": true,
+      "independent_rerender": true,
+      "offline_browser": true
+    }
+  },
+  "status": "passed",
+  "source_hashes": {
+    "scripts/common.py": "1cbf9924d6a0af19915ac7db8d37f520adeff3fd078d2414ed48d762b66b891a",
+    "scripts/compose_report.py": "776bff92075fa87851a268d0249f0ac01f4db6df38035d46222480fd1c9e5a83",
+    "scripts/mcp_client.py": "66c12f591c1081d29ec85d08174531e3cff312d86a8c9a3d3de851078eab6a8e",
+    "scripts/render_report.py": "e871dfabd429e72d2592158fa05d2bdbc27525a4978b8a349457c8b7a6f0005d",
+    "scripts/validate_config.py": "79c20c2e3c1037a0154a9df39b4d21d1071a6000512317fd8c189e96fedb6920"
+  },
+  "technical_status": "passed",
+  "audited_at": "2026-10-27T11:13:04+08:00",
+  "evidence_binding": {
+    "report.json": "2a8e499eaa92b150bfa556515bfbce2c05d22d992ffee391b02ef9925c65195d",
+    "report.html": "3005b0c304e973d8ffd959dd2df51c9c20a5062527c67c25552a3126f9f545c3",
+    "report.md": "11a7bf001193106a6ac795b265ee2671f8bf779e81bc2e8a6b0ae380d0bd35d2",
+    "calls.json": "93a3a4a6d5971d9977e945a9808e7c7c9283b3ed4c603d38ec237c6e2103a3a9",
+    "result.json": "ca14352d794a58bace7285bb8e9928229b2d4cf42d62b8eb191320ace0fca4ad",
+    "source_manifest_sha256": "014e0c39ccd221d4b037bfafc75dc705b73521da54c003be18fa8ca62d4dab92"
+  },
+  "business_review": {
+    "id": "04-prelim-announcement",
+    "verdict": "acceptable",
+    "summary": "已重新读取并绑定本轮正式产物；初审公告记录字段齐全，未被改写成最终注册，并保留上游状态。",
+    "checks": [
+      {
+        "expectation": "记录应保留申请号、类别和状态（若返回）",
+        "status": "pass",
+        "evidence": "针对“记录应保留申请号、类别和状态（若返回）”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=3005b0c304e9）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"北京京东世纪贸易有限公司\",\"matchKeyword\":\"北京京东世纪贸易有限公司\",\"keywordType\":\"name\",\"match_raw\":\"北京京东世纪贸易有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":\"初审公告\"}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":8,\"total\":118}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":8}]；指标=[{\"label\":\"商标总数\",\"value\":\"2916\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"2357\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 81%\"},{\"label\":\"无效商标\",\"value\":\"559\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"21\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"118 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"97%\",\"hint\":\"报告期注册量/申请量（1988/2051），非同批成功率\",\"delta\":\"申请 2051、注册 1988\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"2916\",\"有效商标数\":\"2357\",\"无效商标数\":\"559\",\"近一年申请数\":\"21\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"162\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"234\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"初审公告\",\"数量\":\"118\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"467\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"图形\",\"申请号\":\"91580808\",\"申请人\":\"北京京东世纪贸易有限公司\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"注册日期\":\"-\",\"商标状态\":\"初审公告\",\"代理机构\":\"中原信达知识产权服务（北京）有限公司\"}}]；代表记录=[{\"商标名称\":\"图形\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"马顺顺\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"京宠达\",\"国际分类\":\"18-皮革皮具\",\"申请日期\":\"2026-04-24\",\"商标状态\":\"初审公告\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 2916 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 2357、无效商标 559。（有效率 81%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 52%，前 3 类合计 79%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 72%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2021”（435 件），近年趋势下降 88%，同比 -88%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2022”（376 件），近年上升 34%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      },
+      {
+        "expectation": "初审公告不得误写为最终注册",
+        "status": "pass",
+        "evidence": "针对“初审公告不得误写为最终注册”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=3005b0c304e9）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"北京京东世纪贸易有限公司\",\"matchKeyword\":\"北京京东世纪贸易有限公司\",\"keywordType\":\"name\",\"match_raw\":\"北京京东世纪贸易有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":\"初审公告\"}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":8,\"total\":118}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":8}]；指标=[{\"label\":\"商标总数\",\"value\":\"2916\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"2357\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 81%\"},{\"label\":\"无效商标\",\"value\":\"559\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"21\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"118 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"97%\",\"hint\":\"报告期注册量/申请量（1988/2051），非同批成功率\",\"delta\":\"申请 2051、注册 1988\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"2916\",\"有效商标数\":\"2357\",\"无效商标数\":\"559\",\"近一年申请数\":\"21\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"162\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"234\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"初审公告\",\"数量\":\"118\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"467\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"图形\",\"申请号\":\"91580808\",\"申请人\":\"北京京东世纪贸易有限公司\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"注册日期\":\"-\",\"商标状态\":\"初审公告\",\"代理机构\":\"中原信达知识产权服务（北京）有限公司\"}}]；代表记录=[{\"商标名称\":\"图形\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"马顺顺\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"京宠达\",\"国际分类\":\"18-皮革皮具\",\"申请日期\":\"2026-04-24\",\"商标状态\":\"初审公告\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 2916 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 2357、无效商标 559。（有效率 81%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 52%，前 3 类合计 79%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 72%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2021”（435 件），近年趋势下降 88%，同比 -88%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2022”（376 件），近年上升 34%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      },
+      {
+        "expectation": "结果为空时应如实保留",
+        "status": "pass",
+        "evidence": "针对“结果为空时应如实保留”复核当前冻结产物。本轮三种格式标题一致（JSON/HTML/Markdown；html=3005b0c304e9）；技术状态=passed、真实data调用=3；主体={\"enterprise\":\"北京京东世纪贸易有限公司\",\"matchKeyword\":\"北京京东世纪贸易有限公司\",\"keywordType\":\"name\",\"match_raw\":\"北京京东世纪贸易有限公司\",\"resolved\":true,\"resolve_reason\":\"视为企业全称\",\"searchKeywordType\":\"申请人\",\"fuzzy_total\":null,\"requires_confirmation\":false,\"tmStatus\":\"初审公告\"}；调用=[{\"tool\":\"trademark_bigdata_trademark_profile\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_stats\",\"status\":\"data\",\"rows\":null,\"total\":null},{\"tool\":\"trademark_bigdata_trademark_search\",\"status\":\"data\",\"rows\":8,\"total\":118}]；质量={\"total_sections\":6,\"populated_sections\":6,\"empty_sections\":0,\"coverage_pct\":100}；章节=[{\"title\":\"商标概况\",\"records\":6},{\"title\":\"商标申请趋势\",\"records\":10},{\"title\":\"商标注册趋势\",\"records\":10},{\"title\":\"商标状态分布\",\"records\":9},{\"title\":\"商标类别分布\",\"records\":6},{\"title\":\"商标检索明细\",\"records\":8}]；指标=[{\"label\":\"商标总数\",\"value\":\"2916\",\"hint\":\"企业商标总量\"},{\"label\":\"有效商标\",\"value\":\"2357\",\"hint\":\"当前有效商标数\",\"delta\":\"有效率 81%\"},{\"label\":\"无效商标\",\"value\":\"559\",\"hint\":\"无效商标数\"},{\"label\":\"近一年申请\",\"value\":\"21\",\"hint\":\"最近一年申请商标数\"},{\"label\":\"类别覆盖\",\"value\":\"45 类\",\"hint\":\"涵盖商标类别数\"},{\"label\":\"检索结果\",\"value\":\"118 条\",\"hint\":\"本次检索命中商标条数\"},{\"label\":\"同期注册/申请量比\",\"value\":\"97%\",\"hint\":\"报告期注册量/申请量（1988/2051），非同批成功率\",\"delta\":\"申请 2051、注册 1988\"},{\"label\":\"商标状态数\",\"value\":\"1\",\"hint\":\"不同商标状态数量\"}]；章节样本=[{\"title\":\"商标概况\",\"sample\":{\"商标总数\":\"2916\",\"有效商标数\":\"2357\",\"无效商标数\":\"559\",\"近一年申请数\":\"21\",\"涵盖类别\":\"1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律\",\"商标状态\":\"商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中\"}},{\"title\":\"商标申请趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"162\"}},{\"title\":\"商标注册趋势\",\"sample\":{\"名称/类别/年份\":\"2017\",\"数量\":\"234\"}},{\"title\":\"商标状态分布\",\"sample\":{\"名称/类别/年份\":\"初审公告\",\"数量\":\"118\"}},{\"title\":\"商标类别分布\",\"sample\":{\"名称/类别/年份\":\"35-广告销售\",\"数量\":\"467\"}},{\"title\":\"商标检索明细\",\"sample\":{\"商标名称\":\"图形\",\"申请号\":\"91580808\",\"申请人\":\"北京京东世纪贸易有限公司\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"注册日期\":\"-\",\"商标状态\":\"初审公告\",\"代理机构\":\"中原信达知识产权服务（北京）有限公司\"}}]；代表记录=[{\"商标名称\":\"图形\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"马顺顺\",\"国际分类\":\"7-机械设备\",\"申请日期\":\"2026-05-06\",\"商标状态\":\"初审公告\"},{\"商标名称\":\"京宠达\",\"国际分类\":\"18-皮革皮具\",\"申请日期\":\"2026-04-24\",\"商标状态\":\"初审公告\"}]；解释边界=[{\"feature\":\"商标资产规模\",\"evidence\":\"企业商标总数 2916 件。\",\"interpretation\":\"商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。\"},{\"feature\":\"商标有效性\",\"evidence\":\"有效商标 2357、无效商标 559。（有效率 81%）\",\"interpretation\":\"该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。\"},{\"feature\":\"类别集中度\",\"evidence\":\"“其他”占比约 52%，前 3 类合计 79%（CR3）。\",\"interpretation\":\"CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。\"},{\"feature\":\"商标状态结构\",\"evidence\":\"“商标已注册”为主流状态，占比约 72%。\",\"interpretation\":\"该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。\"},{\"feature\":\"申请趋势研判\",\"evidence\":\"峰值出现在“2021”（435 件），近年趋势下降 88%，同比 -88%。\",\"interpretation\":\"趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。\"},{\"feature\":\"注册趋势研判\",\"evidence\":\"注册峰值在“2022”（376 件），近年上升 34%。\",\"interpretation\":\"注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。\"}]。"
+      }
+    ],
+    "issues": [],
+    "evidence_binding": {
+      "report.json": "2a8e499eaa92b150bfa556515bfbce2c05d22d992ffee391b02ef9925c65195d",
+      "report.html": "3005b0c304e973d8ffd959dd2df51c9c20a5062527c67c25552a3126f9f545c3",
+      "report.md": "11a7bf001193106a6ac795b265ee2671f8bf779e81bc2e8a6b0ae380d0bd35d2",
+      "calls.json": "93a3a4a6d5971d9977e945a9808e7c7c9283b3ed4c603d38ec237c6e2103a3a9",
+      "result.json": "ca14352d794a58bace7285bb8e9928229b2d4cf42d62b8eb191320ace0fca4ad",
+      "source_manifest_sha256": "014e0c39ccd221d4b037bfafc75dc705b73521da54c003be18fa8ca62d4dab92"
+    }
+  }
+}

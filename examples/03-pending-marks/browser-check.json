@@ -1,0 +1,53 @@
+{
+  "metric_overflows": [],
+  "document_title": "小米科技有限责任公司 商标大数据报告",
+  "title_matches": true,
+  "charts": 4,
+  "rendered_charts": 4,
+  "zero_size_charts": 0,
+  "chart_details": [
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 59
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 55
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 41
+    }
+  ],
+  "page_width": 1905,
+  "viewport_width": 1920,
+  "empty_headers": 0,
+  "script_errors": [],
+  "external_resources": 0,
+  "external_asset_references": 0,
+  "ok": true,
+  "report_html_sha256": "3e132ebe4af76f98d0bd91faef0c2e110d8b20c9666cda8322701618f3252819",
+  "report_json_sha256": "49d70c83870e9ef0927ca35deff2260fc2c502f289533dd985d8f11f45b550db",
+  "skill": "trademark-skill",
+  "id": "03-pending-marks",
+  "browser": "Ego Lite",
+  "space_id": 4,
+  "offline": true,
+  "checked_at": "2026-10-27T03:04:24.402Z"
+}

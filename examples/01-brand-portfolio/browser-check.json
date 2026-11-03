@@ -1,0 +1,54 @@
+{
+  "metric_overflows": [],
+  "document_title": "阿里巴巴（中国）有限公司 商标大数据报告",
+  "title_matches": true,
+  "charts": 4,
+  "rendered_charts": 4,
+  "zero_size_charts": 0,
+  "chart_details": [
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 63
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 61
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 55
+    },
+    {
+      "width": 984,
+      "height": 300,
+      "instance": true,
+      "renderer": true,
+      "graphics": 37
+    }
+  ],
+  "page_width": 1905,
+  "viewport_width": 1920,
+  "empty_headers": 0,
+  "script_errors": [],
+  "external_resources": 0,
+  "external_asset_references": 0,
+  "ok": true,
+  "report_html_sha256": "dd6f3ef708a139c1464e85285b0e77907af77a167da73375a700ae80e77bf0e4",
+  "report_json_sha256": "9b5e593c45fd2cfbc9b1395b534ed714d2e747b674bd08756716671cb2e9fc2f",
+  "screenshot": "browser.png",
+  "skill": "trademark-skill",
+  "id": "01-brand-portfolio",
+  "browser": "Ego Lite",
+  "space_id": 4,
+  "offline": true,
+  "checked_at": "2026-10-27T03:04:21.593Z"
+}
