@@ -17,6 +17,7 @@ This file never prints secrets; MCP credentials live in the server's own .env.
 from __future__ import annotations
 
 import argparse
+import copy
 import datetime as dt
 import json
 import pathlib
@@ -236,20 +237,9 @@ def _enrich_metrics_with_profile(metrics: List[Dict[str, Any]], record: Any) -> 
     return metrics
 
 
-def _derive_core_metrics(metrics: List[Dict[str, Any]], core: Mapping[str, Any]) -> List[Dict[str, Any]]:
-    """Derive additional metrics from core analysis sections."""
-    search = core.get("search_records", []) if isinstance(core, dict) else []
-    if isinstance(search, list) and search:
-        try:
-            categories = set(str(r.get("商标分类", "")) for r in search if r.get("商标分类"))
-            if categories:
-                metrics.append({"label": "商标分类数", "value": str(len(categories)), "hint": "不同国际分类数量"})
-            statuses = set(str(r.get("商标状态", "")) for r in search if r.get("商标状态"))
-            if statuses:
-                metrics.append({"label": "商标状态数", "value": str(len(statuses)), "hint": "不同商标状态数量"})
-        except Exception:
-            pass
-    return metrics
+# Legacy sample-scoped metric labels removed from composer output; used only by
+# apply_content_review() to clean older payloads.
+SAMPLE_METRIC_LABELS = {"商标分类数", "商标状态数"}
 
 
 # --------------------------------------------------------------------------- #
@@ -297,7 +287,7 @@ def build_metrics(profile: Mapping[str, Any], search_total: Any, stats: Mapping[
     else:
         metrics.append({"label": "有效商标", "value": _text(p.get("tmValidNumber")) or "-", "hint": "当前有效商标数"})
     metrics.append({"label": "无效商标", "value": _text(p.get("tmInvalidNumber")) or "-", "hint": "无效商标数"})
-    metrics.append({"label": "近一年申请", "value": _text(p.get("tmNumberThisYear")) or "-", "hint": "最近一年申请商标数"})
+    metrics.append({"label": "本年度申请", "value": _text(p.get("tmNumberThisYear")) or "-", "hint": "生成年度内申请数（年初至生成时点）"})
     metrics.append({"label": "类别覆盖", "value": (str(len(p.get("tmTypeList") or [])) + " 类" if isinstance(p.get("tmTypeList"), list) else "-"), "hint": "涵盖商标类别数"})
     if search_total is not None:
         metrics.append({"label": "检索结果", "value": str(search_total) + " 条", "hint": "本次检索命中商标条数"})
@@ -306,7 +296,7 @@ def build_metrics(profile: Mapping[str, Any], search_total: Any, stats: Mapping[
     reg_total = _sum_stat_counts(stats, "tmRegTimeStat")
     if app_total > 0:
         success_rate = reg_total / app_total * 100
-        metrics.append({"label": "同期注册/申请量比", "value": f"{success_rate:.0f}%", "hint": f"报告期注册量/申请量（{reg_total}/{app_total}），非同批成功率", "delta": f"申请 {app_total}、注册 {reg_total}"})
+        metrics.append({"label": "报告期注册/申请量比", "value": f"{success_rate:.0f}%", "hint": f"各报告期注册总量/申请总量（{reg_total}/{app_total}），年份不同、非同一申请队列，不是成功率", "delta": f"申请 {app_total}、注册 {reg_total}"})
     return [m for m in metrics if m.get("value") not in ("", None, "-")]
 
 
@@ -421,45 +411,99 @@ def build_records(core: Mapping[str, Any]) -> List[Dict[str, Any]]:
     return out[:20]
 
 
-def _trend_analysis(rows: List[Mapping[str, Any]]) -> Dict[str, Any]:
-    """Compute trend direction, peak, and YoY change from a {period,count} series."""
-    nums = []
+def _period_year(value: Any) -> Optional[int]:
+    text = _text(value)
+    return int(text[:4]) if len(text) >= 4 and text[:4].isdigit() else None
+
+
+def _trend_analysis(rows: List[Mapping[str, Any]], as_of_year: Optional[int] = None) -> Dict[str, Any]:
+    """Compute a reliable yearly trend from a {period,count} series.
+
+    The current calendar year is partial (tmNumberThisYear is year-to-date) and
+    is excluded from peak/YoY. Fewer than 3 complete years, or either of the
+    last two complete years below 10 filings, is reported as insufficient.
+    """
+    points: List[tuple[Any, float]] = []
     for r in rows:
         try:
-            nums.append(float(str(r.get("数量", 0)).replace(",", "")))
+            n = float(str(r.get("数量", 0)).replace(",", ""))
         except (TypeError, ValueError):
-            nums.append(0.0)
-    if not nums:
+            n = 0.0
+        points.append((r.get("名称/类别/年份", "-"), n))
+    if not points:
         return {}
-    peak_idx = max(range(len(nums)), key=lambda i: nums[i])
-    direction = "持平"
-    yoy = ""
-    if len(nums) >= 2:
-        last, prev = nums[-1], nums[-2]
-        if prev > 0:
-            pct = (last - prev) / prev * 100
-            if pct > 5:
-                direction = f"上升 {pct:.0f}%"
-            elif pct < -5:
-                direction = f"下降 {abs(pct):.0f}%"
-            yoy = f"同比 {pct:+.0f}%"
-    return {"peak_period": rows[peak_idx].get("名称/类别/年份", "-"), "peak_value": nums[peak_idx], "direction": direction, "yoy": yoy, "last": nums[-1]}
+
+    partial_period = None
+    if as_of_year is not None:
+        complete = [(p, n) for p, n in points if _period_year(p) != as_of_year]
+        if len(complete) >= 2 and len(complete) < len(points):
+            partial_period = _text(points[-1][0])
+            points = complete
+    if len(points) < 3:
+        return {"insufficient": "完整年度不足 3 期，未作趋势研判", "partial_period": partial_period}
+
+    last_n = points[-1][1]
+    prev_n = points[-2][1]
+    if min(last_n, prev_n) < 10:
+        return {
+            "insufficient": "近两个完整年度数量过少（<10 件/年），未作同比研判",
+            "partial_period": partial_period,
+            "last_period": _text(points[-1][0]),
+            "last": last_n,
+        }
+
+    peak_idx = max(range(len(points)), key=lambda i: points[i][1])
+    pct = (last_n - prev_n) / prev_n * 100 if prev_n > 0 else 0.0
+    if abs(pct) <= 5:
+        direction = "基本持平"
+        yoy = ""
+    else:
+        direction = f"{'上升' if pct > 0 else '下降'} {abs(pct):.0f}%"
+        verb = "上升" if pct > 0 else "下降"
+        yoy = f"{_text(points[-1][0])} 年较 {_text(points[-2][0])} 年{verb} {abs(pct):.0f}%"
+    return {
+        "peak_period": _text(points[peak_idx][0]),
+        "peak_value": points[peak_idx][1],
+        "direction": direction,
+        "yoy": yoy,
+        "last": last_n,
+        "compare_period": _text(points[-1][0]),
+        "base_period": _text(points[-2][0]),
+        "partial_period": partial_period,
+    }
 
 
 def _concentration(rows: List[Mapping[str, Any]], top_n: int = 3) -> Dict[str, Any]:
-    """Compute top-N concentration (CRn) and dominant category."""
+    """Compute top-N concentration, excluding an upstream "其他" bucket.
+
+    "其他" is an aggregation of unlisted classes, not a class. Treating it as
+    the top class produced misleading evidence such as “其他占比 40%”. The
+    bucket total is returned separately so the report can disclose it.
+    """
     items = []
+    other_total = 0.0
     for r in rows:
+        name = r.get("名称/类别/年份", "-")
         try:
-            items.append((r.get("名称/类别/年份", "-"), float(str(r.get("数量", 0)).replace(",", ""))))
+            value = float(str(r.get("数量", 0)).replace(",", ""))
         except (TypeError, ValueError):
-            items.append((r.get("名称/类别/年份", "-"), 0.0))
+            value = 0.0
+        if str(name).strip() == "其他":
+            other_total += value
+            continue
+        items.append((name, value))
     total = sum(v for _, v in items)
     if not total:
         return {}
     items.sort(key=lambda x: x[1], reverse=True)
     cr = sum(v for _, v in items[:top_n]) / total * 100
-    return {"top": items[0][0], "top_share": items[0][1] / total * 100, "cr": cr, "total": total}
+    return {
+        "top": items[0][0],
+        "top_share": items[0][1] / total * 100,
+        "cr": cr,
+        "total": total,
+        "other_total": other_total,
+    }
 
 
 def _distribution_evenness(rows: List[Mapping[str, Any]]) -> Dict[str, Any]:
@@ -467,6 +511,8 @@ def _distribution_evenness(rows: List[Mapping[str, Any]]) -> Dict[str, Any]:
     Uses coefficient of variation (CV = std/mean); CV low => evenly spread."""
     nums = []
     for r in rows:
+        if str(r.get("名称/类别/年份", "")).strip() == "其他":
+            continue
         try:
             nums.append(float(str(r.get("数量", 0)).replace(",", "")))
         except (TypeError, ValueError):
@@ -483,26 +529,29 @@ def _distribution_evenness(rows: List[Mapping[str, Any]]) -> Dict[str, Any]:
     return {"count": len(nums), "mean": mean, "cv": cv, "even": cv < 0.25}
 
 
-def build_insights(subject: Mapping[str, Any], core: Mapping[str, Any], metrics: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
+def build_insights(subject: Mapping[str, Any], core: Mapping[str, Any], metrics: Sequence[Mapping[str, Any]], as_of_year: Optional[int] = None) -> List[Dict[str, Any]]:
     insights: List[Dict[str, Any]] = []
     metric_map = {m["label"]: str(m["value"]) for m in metrics}
     tm_count = metric_map.get("商标总数")
     valid = metric_map.get("有效商标")
     invalid = metric_map.get("无效商标")
-    recent = metric_map.get("近一年申请")
+    recent = metric_map.get("本年度申请")
 
     if tm_count:
         insights.append({
             "feature": "商标资产规模",
-            "evidence": f"企业商标总数 {tm_count} 件。",
-            "interpretation": "商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。",
+            "evidence": f"当前返回口径下商标记录总数为 {tm_count} 件。",
+            "interpretation": "该计数只表示当前数据口径内的商标记录规模；不能说明品牌布局广度、市场覆盖或资产健康度，需结合类别、有效状态和实际使用证据。",
         })
     if valid or invalid:
         try:
             v_n = float(valid) if valid else 0.0
             i_n = float(invalid) if invalid else 0.0
-            denom = v_n + i_n
-            ratio = f"有效率 {v_n / denom * 100:.0f}%" if denom else ""
+            total_n = float(tm_count) if tm_count else 0.0
+            # Match the KPI delta denominator (valid / total) so the same
+            # indicator is not shown with two different effective rates.
+            denom = total_n if total_n > 0 else v_n + i_n
+            ratio = f"有效商标占商标总数 {v_n / denom * 100:.0f}%" if denom else ""
         except (TypeError, ValueError):
             ratio = ""
         evidence = "、".join(p for p in (f"有效商标 {valid}" if valid else None, f"无效商标 {invalid}" if invalid else None) if p) + "。"
@@ -514,20 +563,22 @@ def build_insights(subject: Mapping[str, Any], core: Mapping[str, Any], metrics:
     type_stat = core.get("type_stat") or []
     if type_stat:
         evenness = _distribution_evenness(type_stat)
+        conc = _concentration(type_stat, 3)
+        other_clause = ""
+        if conc and conc.get("other_total"):
+            other_clause = f"；另有“其他”未细分 {int(conc['other_total'])} 件（不计入类别份额）"
         if evenness and evenness.get("even"):
             insights.append({
                 "feature": "类别均匀布局",
-                "evidence": f"覆盖 {evenness['count']} 个类别，各类别数量接近（均值 {evenness['mean']:.1f}，变异系数 {evenness['cv']:.2f}），分布均匀。",
-                "interpretation": "低方差只说明返回记录在类别间较均匀；是否属于防御性注册、多品牌或多业务布局需结合商标用途核验。",
+                "evidence": f"已列明类别 {evenness['count']} 个，各类别数量接近（均值 {evenness['mean']:.1f}，变异系数 {evenness['cv']:.2f}{other_clause}）。",
+                "interpretation": "低方差只说明返回记录在已列明类别间较均匀；是否属于防御性注册、多品牌或多业务布局需结合商标用途核验。",
             })
-        else:
-            conc = _concentration(type_stat, 3)
-            if conc:
-                insights.append({
-                    "feature": "类别集中度",
-                    "evidence": f"“{conc['top']}”占比约 {conc['top_share']:.0f}%，前 3 类合计 {conc['cr']:.0f}%（CR3）。",
-                    "interpretation": "CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。",
-                })
+        elif conc:
+            insights.append({
+                "feature": "类别集中度",
+                "evidence": f"“{conc['top']}”占已列明类别约 {conc['top_share']:.0f}%，前 3 类合计 {conc['cr']:.0f}%（CR3）{other_clause}。",
+                "interpretation": "CR3 只描述已列明类别的数量集中度；“其他”为上游未细分聚合，不能当作单一类别或核心业务判断依据。",
+            })
     status_stat = core.get("status_stat") or []
     if status_stat:
         conc = _concentration(status_stat, 2)
@@ -539,20 +590,22 @@ def build_insights(subject: Mapping[str, Any], core: Mapping[str, Any], metrics:
             })
     apply_trend = core.get("apply_trend") or []
     if apply_trend:
-        ta = _trend_analysis(apply_trend)
-        if ta:
+        ta = _trend_analysis(apply_trend, as_of_year)
+        if ta and not ta.get("insufficient"):
+            extra = f"；{ta['partial_period']} 年数据截至生成时点，未纳入趋势比较" if ta.get("partial_period") else ""
             insights.append({
                 "feature": "申请趋势研判",
-                "evidence": f"峰值出现在“{ta['peak_period']}”（{ta['peak_value']:.0f} 件），近年趋势{ta['direction']}，{ta.get('yoy', '')}。",
+                "evidence": f"峰值出现在“{ta['peak_period']}”（{ta['peak_value']:.0f} 件）；{ta['yoy'] or '近两个完整年度基本持平'}{extra}。",
                 "interpretation": "趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。",
             })
     reg_trend = core.get("reg_trend") or []
     if reg_trend:
-        ta = _trend_analysis(reg_trend)
-        if ta and ta.get("direction") != "持平":
+        ta = _trend_analysis(reg_trend, as_of_year)
+        if ta and not ta.get("insufficient") and ta.get("direction") != "基本持平":
+            extra = f"；{ta['partial_period']} 年数据截至生成时点，未纳入趋势比较" if ta.get("partial_period") else ""
             insights.append({
                 "feature": "注册趋势研判",
-                "evidence": f"注册峰值在“{ta['peak_period']}”（{ta['peak_value']:.0f} 件），近年{ta['direction']}。",
+                "evidence": f"注册峰值在“{ta['peak_period']}”（{ta['peak_value']:.0f} 件）；{ta['yoy'] or ta['direction']}{extra}。",
                 "interpretation": "注册趋势描述报告期核准数量，可能对应更早申请；不能单独证明权利持续稳固。",
             })
     # A reported zero is evidence of zero applications, not evidence of strategy.
@@ -562,9 +615,9 @@ def build_insights(subject: Mapping[str, Any], core: Mapping[str, Any], metrics:
         this_year_n = None
     if this_year_n == 0:
         insights.append({
-            "feature": "近一年申请观察",
-            "evidence": "近一年（tmNumberThisYear）新申请商标数为 0。",
-            "interpretation": "该字段仅表示返回口径下申请数为 0，不能单独判断品牌布局停滞或保护不足。",
+            "feature": "本年度申请观察",
+            "evidence": "本年度（截至生成时点）新申请商标数为 0。",
+            "interpretation": "该字段仅表示返回口径下本年度申请数为 0，不能单独判断品牌布局停滞或保护不足。",
         })
     if not insights:
         insights.append({
@@ -603,37 +656,55 @@ def build_dry_run_payload(raw: str, keyword_type: str) -> Dict[str, Any]:
     subject = {**subject, "match_raw": raw, "keywordType": keyword_type}
     core = sample.get("core_analysis") or {}
     metrics = sample.get("metrics") or []
-    return _assemble(subject, core, metrics, dry_run=True)
+    return apply_content_review(_assemble(subject, core, metrics, dry_run=True))
 
 
 # --------------------------------------------------------------------------- #
 # Assembly
 # --------------------------------------------------------------------------- #
 
+def _generated_year(value: Any) -> Optional[int]:
+    text = _text(value)
+    return int(text[:4]) if len(text) >= 4 and text[:4].isdigit() else None
+
+
+def _content_quality_report(core: Mapping[str, Any]) -> Dict[str, Any]:
+    """Section-fill rate from final declared sections and actual bodies.
+
+    0 is populated; only None/""/[]/{} count as empty. Not an accuracy score.
+    """
+    ca = core if isinstance(core, dict) else {}
+    sections = [s for s in (ca.get("sections") or []) if isinstance(s, dict) and s.get("key")]
+
+    def filled(value: Any) -> bool:
+        return value is not None and value != "" and value != [] and value != {}
+
+    if sections:
+        total = len(sections)
+        populated = sum(1 for spec in sections if filled(ca.get(spec["key"])))
+    else:
+        keys = [k for k in ca if k != "sections"]
+        total = max(1, len(keys))
+        populated = sum(1 for key in keys if filled(ca.get(key)))
+    return {
+        "total_sections": total,
+        "populated_sections": populated,
+        "empty_sections": total - populated,
+        "coverage_pct": round(populated / max(1, total) * 100),
+    }
+
+
 def _assemble(subject: Mapping[str, Any], core: Mapping[str, Any], metrics: Sequence[Mapping[str, Any]], *, dry_run: bool) -> Dict[str, Any]:
     abstract = build_abstract(subject, core, metrics)
     records = build_records(core)
-    insights = build_insights(subject, core, metrics)
-    # Quality gate: count populated core-analysis sections.
-    ca = core if isinstance(core, dict) else {}
-    secs = ca.get("sections", [])
-    if secs:
-        total_secs = len(secs)
-        populated = sum(1 for s in secs if isinstance(s, dict) and _has_evidence(ca.get(s.get("key"))))
-    else:
-        total_secs = max(1, len([k for k in ca if k != "sections"]))
-        populated = sum(1 for k in ca if k != "sections" and _has_evidence(ca.get(k)))
-    quality_report = {
-        "total_sections": total_secs,
-        "populated_sections": populated,
-        "empty_sections": total_secs - populated,
-        "coverage_pct": round(populated / max(1, total_secs) * 100),
-    }
-    if populated == 0:
+    generated_at = dt.datetime.now().astimezone().isoformat(timespec="seconds")
+    insights = build_insights(subject, core, metrics, _generated_year(generated_at))
+    quality_report = _content_quality_report(core)
+    if quality_report["populated_sections"] == 0:
         import sys
         print("⚠️ 质量门禁警告: 所有核心分析维度均无数据", file=sys.stderr)
     title = f"{subject.get('enterprise') or '目标企业'} 商标大数据报告"
-    return {
+    report = {
         "report_type": REPORT_TYPE,
         "title": title,
         "banner": REPORT_BANNER,
@@ -653,11 +724,56 @@ def _assemble(subject: Mapping[str, Any], core: Mapping[str, Any], metrics: Sequ
                 {"name": "商标概况", "product_id": "671357d127ab3417e1f3f21b"},
                 {"name": "商标趋势统计", "product_id": "66d5b7df537c3f61d646c2dc"},
             ],
-            "generated_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+            "generated_at": generated_at,
             "dry_run": dry_run,
             "quality_report": quality_report,
         },
     }
+    return report
+
+
+def _normalize_metric_labels(metrics: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
+    """Bring older payload metric labels in line with the corrected semantics."""
+    renamed = {
+        "近一年申请": ("本年度申请", "生成年度内申请数（年初至生成时点）"),
+        "同期注册/申请量比": ("报告期注册/申请量比", "各报告期注册总量/申请总量，非同一申请队列，不是成功率"),
+    }
+    out: List[Dict[str, Any]] = []
+    for metric in metrics:
+        if not isinstance(metric, dict):
+            continue
+        item = dict(metric)
+        if item.get("label") in renamed:
+            label, hint = renamed[item["label"]]
+            item["label"] = label
+            item["hint"] = hint
+        out.append(item)
+    return out
+
+
+def apply_content_review(report: Mapping[str, Any]) -> Dict[str, Any]:
+    """Rebuild trademark narrative content from an existing payload.
+
+    Pure/in-memory: uses core analysis, metrics, subject and generated_at already
+    present in the payload. Changes: drops sample-scope metrics, normalizes
+    current-year/registration-ratio labels, excludes the upstream "其他" class
+    from concentration, rebuilds trend insights without the partial current
+    year, and refreshes abstract/summary/executive_summary.
+    """
+    out = copy.deepcopy(dict(report))
+    metrics = _normalize_metric_labels([m for m in (out.get("metrics") or []) if isinstance(m, dict) and m.get("label") not in SAMPLE_METRIC_LABELS])
+    out["metrics"] = metrics
+    subject = out.get("subject") or {}
+    core = out.get("core_analysis") or {}
+    source = out.get("data_source") or {}
+    insights = build_insights(subject, core, metrics, _generated_year(source.get("generated_at")))
+    out["insights"] = insights
+    abstract = build_abstract(subject, core, metrics)
+    out["abstract"] = abstract
+    out["summary"] = abstract
+    out["executive_summary"] = [item["interpretation"] for item in insights][:5] or [abstract[:120]]
+    out.setdefault("data_source", {})["quality_report"] = _content_quality_report(core)
+    return out
 
 
 @paid_call_scope
@@ -685,10 +801,9 @@ def build_payload(raw: str, keyword_type: str, tm_status: Optional[str], page_si
     subject["tmStatus"] = tm_status
     core = build_core_analysis(profile, search, stats, enterprise, tm_status)
     metrics = build_metrics(profile if isinstance(profile, dict) else {}, search_total, stats if isinstance(stats, dict) else {})
-    _derive_core_metrics(metrics, core if isinstance(core, dict) else {})
     # --- Enterprise profile enrichment (from fuzzy_search) ---
     _enrich_metrics_with_profile(metrics, resolved.get("record") if isinstance(resolved, dict) else None)
-    report = _assemble(subject, core, metrics, dry_run=False)
+    report = apply_content_review(_assemble(subject, core, metrics, dry_run=False))
     return attach_pagination(report, {"商标检索明细": search})
 
 

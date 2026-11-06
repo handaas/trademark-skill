@@ -26,6 +26,15 @@ description: Use for generating a professional trademark big-data report (商标
 - 报告所有章节标题、指标卡标签必须用中文；`core_analysis.sections` 的 `title` 字段必须中文，不可显示英文 key（如 `holders`、`investments`）。
 - 指标值必须可读化：金额格式为"X 亿/万 + 币种"，地址拼接省市区，比率显示百分号。详见 `references/report-output.md` 的「数据格式约束」。
 
+## 内容整理与交付审校（强制）
+
+1. **阶段分离**：申请、初审公告、注册、无效是不同阶段。申请中或初审公告不得写成“已注册”；“商标已注册”只说明当前状态，不等于权利无争议。
+2. **去重规则**：同一商标名跨不同国际分类是独立申请，不得按名称去重；仅“同一申请号/注册号 + 同一类别”可判重复。检索明细是当前页样本，不能据此生成全量“状态数/分类数”。
+3. **类别口径**：类别用 1–45 类规范名；上游“其他”是未细分聚合，不得当作一个类别参与集中度或“核心类别”判断。已按类别/状态筛选时，不再把筛选后的 100% 分布当结构结论。
+4. **趋势只比完整年度**：当前年度为年度迄今数据，不参与峰值/同比；近两年任一不足 10 件时只列计数，不作升降判断；“注册/申请量比”是不同年份总量之比，不是成功率。
+5. **证据边界**：有效/无效、类别集中度、状态结构只描述当前返回口径；形成原因须回到续展、驳回、撤销、无效宣告记录。不得由商标数量推断品牌价值或经营状况。
+6. 保留原始状态、类别、申请号供核对；正常生成与离线修订均调用 `apply_content_review(report)`，只使用报告既有字段。
+
 ## 付费调用与分页预算（强制）
 
 每次 MCP 业务调用和每一页明细请求都可能计费；希望得到 total / 页数计算**不是**全量拉取的授权。
@@ -72,6 +81,8 @@ description: Use for generating a professional trademark big-data report (商标
 3. **组装统一报告**：核心分析含商标概况（KV）、申请趋势、注册趋势、状态分布、类别分布、商标检索明细（表）。
 4. **渲染三件套**：`compose_report.py --enterprise ... --output ... --report-output ...` 直接产出 JSON + HTML + Markdown；或 `render_report.py --input ... --output ...` 重渲染。
 5. **返回路径**：返回 JSON、HTML、Markdown 文件路径，以及企业全称映射与数据口径。
+
+- **渲染前置检查**：执行会产出含图表 HTML / PDF 的报告命令前，先验证 `node --version` 与本 skill 自带 `assets/vendor/echarts.min.js` 存在；内嵌静态 SVG 的生成需要 Node.js（推荐当前 LTS，无需 npm 包），缺失时报告生成明确报错。查看已生成的 HTML 与 Markdown 输出不需要 Node。
 
 ## 脚本速查
 
