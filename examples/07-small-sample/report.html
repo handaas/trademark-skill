@@ -37,6 +37,7 @@
     .biz-metric .m-tag.t-down { color:#dc2626; }
     .biz-metric .m-tag.t-neutral { color:#6366f1; }
     .biz-metric .m-value { color:#0b3768; font-size:26px; line-height:1.1; font-weight:900; letter-spacing:-.02em; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; margin-top:auto; }
+    .biz-metric .m-hint { color:#64748b; font-size:11px; line-height:1.5; margin-top:6px; text-align:left; }
     .biz-metric .m-value .m-tag.t-up { color:#16a34a; }
     .biz-metric .m-value .m-tag.t-down { color:#dc2626; }
     .biz-metric .m-value .m-tag.t-neutral { color:#6366f1; }
@@ -165,7 +166,57 @@
     .glossary-term { display:flex; align-items:flex-start; padding:12px 14px; background:#f1f6fb; color:#0b5ca8; font-size:13px; font-weight:800; border-right:3px solid #0b5ca8; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif; }
     .glossary-def { padding:12px 16px; color:#334155; font-size:13px; line-height:1.7; }
   </style>
-  <script>
+  <style>
+.chart-frame{position:relative;width:100%;height:300px;}
+.chart-box-gauge .chart-frame{height:240px;}
+.chart-static{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;}
+.chart-static svg{display:block;width:100%;height:100%;}
+.chart-frame .chart-canvas{position:absolute;top:0;left:0;width:100%;height:100% !important;visibility:hidden;z-index:1;}
+.chart-frame[data-chart-state="ready"] .chart-canvas{visibility:visible;}
+.chart-frame[data-chart-state="ready"] .chart-static{visibility:hidden;}
+.chart-frame .chart-status{position:absolute;left:0;right:0;bottom:0;margin:0;padding:2px 8px;font-size:11px;color:#64748b;text-align:center;background:rgba(255,255,255,.88);z-index:2;}
+.chart-frame .chart-status:empty{display:none;}
+@media print{
+  .chart-frame{height:auto;overflow:visible;}
+  .chart-frame .chart-canvas{display:none !important;visibility:hidden;}
+  .chart-frame .chart-static{position:static;display:block !important;visibility:visible !important;}
+  .chart-frame .chart-status{display:none;}
+  .chart-static svg{height:auto;}
+}
+</style>
+<script>function handaasChartOption(spec){
+  if(!spec || ['line','bar','pie','gauge','radar'].indexOf(spec.type)<0){return null;}
+  var PALETTE=['#0b5ca8','#0284c7','#0b3768','#d97706','#059669','#dc2626','#7c3aed','#db2777','#0891b2','#65a30d'];
+  var FONTS="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif";
+  var opt={animation:false,color:PALETTE,tooltip:{trigger: spec.type==='pie'?'item':'axis'},textStyle:{fontFamily:FONTS,fontSize:12,color:'#334155'},grid:{left:48,right:24,top:30,bottom:40},legend:{top:0,textStyle:{fontSize:11}}};
+  if(spec.type==='line'){
+    opt.xAxis={type:'category',data:spec.x,axisLabel:{fontSize:11,interval:0,rotate: spec.x && spec.x.length>6?35:0}};
+    opt.yAxis={type:'value'};
+    opt.series=spec.series.map(function(s){return{name:s.name,type:'line',smooth:true,areaStyle: spec.area?{opacity:0.18}:undefined,stack: spec.stack?s.name:undefined,data:s.data,label:{show:true,position:'top',fontSize:11}};});
+    if(spec.stack){opt.tooltip={trigger:'axis'};}
+  }else if(spec.type==='bar'){
+    var horiz=spec.orient==='h';
+    var cats=spec.names, vals=spec.values;
+    if(horiz){opt.yAxis={type:'category',data:cats,axisLabel:{fontSize:11}};opt.xAxis={type:'value'};opt.grid={left:120,right:30,top:20,bottom:30};}
+    else{opt.xAxis={type:'category',data:cats,axisLabel:{fontSize:11,interval:0,rotate: cats&&cats.length>6?35:0}};opt.yAxis={type:'value'};}
+    opt.series=[{type:'bar',data:vals,itemStyle:{color:PALETTE[0]},label:{show:true,position: horiz?'right':'top',fontSize:11},barMaxWidth:42}];
+    opt.tooltip={trigger:'axis',axisPointer:{type:'shadow'}};
+  }else if(spec.type==='pie'){
+    opt.series=[{type:'pie',radius: spec.donut?['42%','68%']:'68%',center:['50%','55%'],data:spec.data,itemStyle:{borderColor:'#fff',borderWidth:2},label:{fontSize:11,formatter:'{b}: {c} ({d}%)'}}];
+    opt.legend={bottom:0,textStyle:{fontSize:11}};
+    opt.tooltip={trigger:'item',formatter:'{b}: {c} ({d}%)'};
+  }else if(spec.type==='gauge'){
+    var v=spec.value, mx=spec.max||100;
+    var col=v/mx>0.66?'#dc2626':(v/mx>0.33?'#d97706':'#059669');
+    opt.series=[{type:'gauge',min:0,max:mx,progress:{show:true,width:14,itemStyle:{color:col}},axisLine:{lineStyle:{width:14}},axisTick:{show:false},splitLine:{length:8,lineStyle:{color:'#fff'}},pointer:{width:5},detail:{valueAnimation:false,formatter:'{value}',fontSize:28,color:col,offsetCenter:[0,'30%']},data:[{value:v,name:spec.level||''}],title:{fontSize:13,color:'#475569',offsetCenter:[0,'62%']}}];
+  }else if(spec.type==='radar'){
+    opt.radar={indicator:spec.indicators,radius:'62%',axisName:{color:'#475569',fontSize:11},splitArea:{areaStyle:{color:['#f8fbff','#eef4fb']}}};
+    opt.series=[{type:'radar',areaStyle:{opacity:0.18},data:spec.series}];
+  }
+  return opt;
+}
+</script>
+<script>
 /*
 * Licensed to the Apache Software Foundation (ASF) under one
 * or more contributor license agreements.  See the NOTICE file
@@ -218,8 +269,10 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   var status=window.__handaas_chart_status={state:'waiting',total:0,ready:0,failed:0};
   var timer=null, retries=0, MAX_RETRIES=100;
   var layoutRetries=0, MAX_LAYOUT_RETRIES=50;
-  var PALETTE=['#0b5ca8','#0284c7','#0b3768','#d97706','#059669','#dc2626','#7c3aed','#db2777','#0891b2','#65a30d'];
-  var FONTS='-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif';
+  var MSG_LOADING='图表库正在加载，数据明细仍可查看。';
+  var MSG_MISSING='图表交互不可用，已保留静态图表，数据明细仍可查看。';
+  var MSG_LAYOUT='图表等待布局完成后渲染，数据明细仍可查看。';
+  var MSG_FAILED='图表交互初始化失败，已保留静态图表，数据明细仍可查看。';
   function summarize(nodes){
     status.total=nodes.length;status.ready=0;status.failed=0;
     nodes.forEach(function(el){
@@ -229,18 +282,40 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     status.state=status.ready===status.total?'ready':
       (status.ready+status.failed===status.total?(status.ready?'degraded':'error'):'waiting');
   }
+  function frameOf(el){
+    var p=el.parentElement;
+    if(p&&(' '+p.className+' ').indexOf(' chart-frame ')>-1){return p;}
+    return null;
+  }
+  function setStatus(el,msg){
+    var f=frameOf(el);
+    if(f){
+      var p=f.querySelector('.chart-status');
+      if(p){p.textContent=msg;}
+    }else{
+      el.textContent=msg;
+    }
+  }
   function raf(fn){if(window.requestAnimationFrame){window.requestAnimationFrame(fn);}else{fn();}}
+  function hasGeometry(chart,el){
+    if(!chart || chart.getWidth()<2 || chart.getHeight()<2){return false;}
+    var svg=el.querySelector('svg');
+    if(!svg){return false;}
+    return !!svg.querySelector('path,rect,circle,line,text,polygon,polyline');
+  }
   function boot(){
     if(document.readyState==='loading'){return;}
     var nodes=document.querySelectorAll('.chart-canvas');
     if(!nodes.length){summarize(nodes);return;}
-    if(!window.echarts || typeof window.echarts.init!=='function'){
+    if(!window.echarts || typeof window.echarts.init!=='function' || typeof window.handaasChartOption!=='function'){
       var exhausted=retries>=MAX_RETRIES;
       nodes.forEach(function(el){
         if(el.__handaas_chart_ready){return;}
         el.__handaas_dependency_error=true;
         el.setAttribute('data-chart-state',exhausted?'error':'waiting');
-        el.textContent=exhausted?'图表库加载失败或不可用，请查看数据明细或重新生成离线报告。':'图表库正在加载，数据明细仍可查看。';
+        setStatus(el,exhausted?MSG_MISSING:MSG_LOADING);
+        var f=frameOf(el);
+        if(f){f.setAttribute('data-chart-state',exhausted?'error':'static');}
       });
       summarize(nodes);
       if(!exhausted && timer===null){
@@ -253,6 +328,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
     var pendingLayout=0;
     nodes.forEach(function(el){
       if(el.__handaas_chart_ready){return;}
+      var f=frameOf(el);
       if(el.getAttribute('data-chart-state')==='error' && !el.__handaas_dependency_error){return;}
       if(window.ResizeObserver && !el.__handaas_resize_observer){
         el.__handaas_resize_observer=new ResizeObserver(function(){
@@ -264,7 +340,8 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
       }
       if((el.getClientRects && el.getClientRects().length===0) || el.clientWidth<2 || el.clientHeight<2){
         el.setAttribute('data-chart-state','waiting');
-        el.textContent='图表等待布局完成后渲染，数据明细仍可查看。';
+        setStatus(el,MSG_LAYOUT);
+        if(f){f.setAttribute('data-chart-state','static');}
         pendingLayout++;
         return;
       }
@@ -274,46 +351,36 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         if(!raw){throw new Error('Missing chart configuration');}
         // getAttribute already decodes HTML entities; a second decode corrupts labels.
         var spec=JSON.parse(raw);
-        if(['line','bar','pie','gauge','radar'].indexOf(spec.type)<0){throw new Error('Unsupported chart type');}
+        var opt=window.handaasChartOption(spec);
+        if(!opt){throw new Error('Unsupported chart type');}
         el.textContent='';
         chart=window.echarts.init(el,null,{renderer:'svg'});
-      var opt={color:PALETTE,tooltip:{trigger: spec.type==='pie'?'item':'axis'},textStyle:{fontFamily:FONTS,fontSize:12,color:'#334155'},grid:{left:48,right:24,top:30,bottom:40},legend:{top:0,textStyle:{fontSize:11}}};
-      if(spec.type==='line'){
-        opt.xAxis={type:'category',data:spec.x,axisLabel:{fontSize:11,interval:0,rotate: spec.x && spec.x.length>6?35:0}};
-        opt.yAxis={type:'value'};
-        opt.series=spec.series.map(function(s){return{name:s.name,type:'line',smooth:true,areaStyle: spec.area?{opacity:0.18}:undefined,stack: spec.stack?s.name:undefined,data:s.data,label:{show:true,position:'top',fontSize:11}};});
-        if(spec.stack){opt.tooltip={trigger:'axis'};}
-      }else if(spec.type==='bar'){
-        var horiz=spec.orient==='h';
-        var cats=spec.names, vals=spec.values;
-        if(horiz){opt.yAxis={type:'category',data:cats,axisLabel:{fontSize:11}};opt.xAxis={type:'value'};opt.grid={left:120,right:30,top:20,bottom:30};}
-        else{opt.xAxis={type:'category',data:cats,axisLabel:{fontSize:11,interval:0,rotate: cats&&cats.length>6?35:0}};opt.yAxis={type:'value'};}
-        opt.series=[{type:'bar',data:vals,itemStyle:{color:PALETTE[0]},label:{show:true,position: horiz?'right':'top',fontSize:11},barMaxWidth:42}];
-        opt.tooltip={trigger:'axis',axisPointer:{type:'shadow'}};
-      }else if(spec.type==='pie'){
-        opt.series=[{type:'pie',radius: spec.donut?['42%','68%']:'68%',center:['50%','55%'],data:spec.data,itemStyle:{borderColor:'#fff',borderWidth:2},label:{fontSize:11,formatter:'{b}: {c} ({d}%)'}}];
-        opt.legend={bottom:0,textStyle:{fontSize:11}};
-        opt.tooltip={trigger:'item',formatter:'{b}: {c} ({d}%)'};
-      }else if(spec.type==='gauge'){
-        var v=spec.value, mx=spec.max||100;
-        var col=v/mx>0.66?'#dc2626':(v/mx>0.33?'#d97706':'#059669');
-        opt.series=[{type:'gauge',min:0,max:mx,progress:{show:true,width:14,itemStyle:{color:col}},axisLine:{lineStyle:{width:14}},axisTick:{show:false},splitLine:{length:8,lineStyle:{color:'#fff'}},pointer:{width:5},detail:{valueAnimation:true,formatter:'{value}',fontSize:28,color:col,offsetCenter:[0,'30%']},data:[{value:v,name:spec.level||''}],title:{fontSize:13,color:'#475569',offsetCenter:[0,'62%']}}];
-      }else if(spec.type==='radar'){
-        opt.radar={indicator:spec.indicators,radius:'62%',axisName:{color:'#475569',fontSize:11},splitArea:{areaStyle:{color:['#f8fbff','#eef4fb']}}};
-        opt.series=[{type:'radar',areaStyle:{opacity:0.18},data:spec.series}];
-      }
         chart.setOption(opt);
+        // Real synchronous flush: setOption already flushes internally, but
+        // drive the zrender painter once more before the geometry gate. Any
+        // throw here falls into catch and keeps the static SVG.
+        var zr=chart.getZr();
+        if(zr && typeof zr.flush==='function'){zr.flush();}
+        // Never reveal the interactive layer (and never hide the static SVG)
+        // before real SVG geometry exists on the canvas overlay.
+        if(!hasGeometry(chart,el)){throw new Error('Empty chart geometry');}
         el.__handaas_chart=chart;
         el.__handaas_chart_ready=true;
         el.__handaas_dependency_error=false;
         el.setAttribute('data-chart-state','ready');
         window.__echarts_instances.push(chart);
+        if(f){
+          f.setAttribute('data-chart-state','ready');
+          var p=f.querySelector('.chart-status');
+          if(p){p.textContent='';}
+        }
         raf(function(){try{chart.resize();}catch(ignored){}});
       }catch(e){
         if(chart && typeof chart.dispose==='function'){try{chart.dispose();}catch(ignored){}}
         el.__handaas_dependency_error=false;
         el.setAttribute('data-chart-state','error');
-        el.textContent='图表绘制失败，请查看数据明细。';
+        setStatus(el,MSG_FAILED);
+        if(f){f.setAttribute('data-chart-state','error');}
       }
     });
     summarize(nodes);
@@ -363,7 +430,7 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
         <h1>比亚迪股份有限公司 商标大数据报告</h1>
         <p class="report-lead">本报告以“比亚迪股份有限公司”为分析对象，基于商标公开数据，系统呈现企业商标概况、申请/注册趋势、状态分布、类别分布与商标检索明细。关键指标包括：商标总数 3907、有效商标 2309、无效商标 1598、近一年申请 376、类别覆盖 45 类。报告同时给出商标类别集中度与近期申请活跃度的结构化解读，便于品牌管理、竞争分析与知识产权决策参考</p>
         <div class="abstract-box">报告涵盖查询对象、数据总览、核心分析、代表性记录与结构洞察，所有数据均标注口径与来源。</div>
-        <div class="biz-metrics"><div class="biz-metric"><span class="m-name">商标总数</span><span class="m-tag"></span><span class="m-value">3907</span></div><div class="biz-metric"><span class="m-name">有效商标</span><span class="m-tag t-neutral">有效率 59%</span><span class="m-value">2309</span></div><div class="biz-metric"><span class="m-name">无效商标</span><span class="m-tag"></span><span class="m-value">1598</span></div><div class="biz-metric"><span class="m-name">近一年申请</span><span class="m-tag"></span><span class="m-value">376</span></div><div class="biz-metric"><span class="m-name">类别覆盖</span><span class="m-tag"></span><span class="m-value">45 类</span></div><div class="biz-metric"><span class="m-name">检索结果</span><span class="m-tag"></span><span class="m-value">3907 条</span></div><div class="biz-metric"><span class="m-name">同期注册/申请量比</span><span class="m-tag t-neutral">申请 3110、注册 1969</span><span class="m-value">63%</span></div><div class="biz-metric"><span class="m-name">商标状态数</span><span class="m-tag"></span><span class="m-value">1</span></div></div>
+        <div class="biz-metrics"><div class="biz-metric"><span class="m-name">商标总数</span><span class="m-tag"></span><span class="m-value">3907</span><span class="m-hint">企业商标总量</span></div><div class="biz-metric"><span class="m-name">有效商标</span><span class="m-tag t-neutral">有效率 59%</span><span class="m-value">2309</span><span class="m-hint">当前有效商标数</span></div><div class="biz-metric"><span class="m-name">无效商标</span><span class="m-tag"></span><span class="m-value">1598</span><span class="m-hint">无效商标数</span></div><div class="biz-metric"><span class="m-name">近一年申请</span><span class="m-tag"></span><span class="m-value">376</span><span class="m-hint">最近一年申请商标数</span></div><div class="biz-metric"><span class="m-name">类别覆盖</span><span class="m-tag"></span><span class="m-value">45 类</span><span class="m-hint">涵盖商标类别数</span></div><div class="biz-metric"><span class="m-name">检索结果</span><span class="m-tag"></span><span class="m-value">3907 条</span><span class="m-hint">本次检索命中商标条数</span></div><div class="biz-metric"><span class="m-name">同期注册/申请量比</span><span class="m-tag t-neutral">申请 3110、注册 1969</span><span class="m-value">63%</span><span class="m-hint">报告期注册量/申请量（1969/3110），非同批成功率</span></div><div class="biz-metric"><span class="m-name">商标状态数</span><span class="m-tag"></span><span class="m-value">1</span><span class="m-hint">不同商标状态数量</span></div></div>
         <ul class="exec-list"><li>商标总量反映企业品牌布局广度；结合有效/无效比例可评估商标资产健康度。</li><li>该比例只描述当前返回的有效/无效数量结构；形成原因需结合续展、驳回、撤销和无效宣告记录核查。</li><li>CR3 只描述类别数量集中度，不能单独判断核心业务或注册策略。</li><li>该结果只描述当前状态数量结构；稳定性、活跃度和维护风险需结合申请时间、续展及案件记录核验。</li><li>趋势仅描述申请数量变化，不能单独证明品牌投入、业务扩张或收缩，需结合产品发布和经营资料核验。</li></ul>
         <div class="cover-findings"><h3 class="cover-findings-title">核心发现</h3><div class="cover-findings-grid"><div class="finding-card"><p class="f-label">商标资产规模</p><p class="f-text">企业商标总数 3907 件。</p></div><div class="finding-card"><p class="f-label">商标有效性</p><p class="f-text">有效商标 2309、无效商标 1598。（有效率 59%）</p></div><div class="finding-card"><p class="f-label">类别集中度</p><p class="f-text">“其他”占比约 49%，前 3 类合计 87%（CR3）。</p></div><div class="finding-card"><p class="f-label">商标状态结构</p><p class="f-text">“商标已注册”为主流状态，占比约 57%。</p></div></div></div>
         <div class="cover-dimensions"><span class="dim-label">分析维度</span><div class="dim-tags"><span class="dim-tag">商标概况</span><span class="dim-tag">商标申请趋势</span><span class="dim-tag">商标注册趋势</span><span class="dim-tag">商标状态分布</span><span class="dim-tag">商标类别分布</span><span class="dim-tag">商标检索明细</span></div></div>
@@ -374,12 +441,371 @@ var Fr={},Gr={};var Wr,Hr=function(){function t(t,e,n){var i=this;this._sleepAft
   <main class="research-doc">
     <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>报告摘要</h2><p class="biz-section-note">概述分析对象、数据覆盖范围与核心发现。</p></div><span class="biz-tag">Summary</span></div><p class="biz-summary">本报告以“比亚迪股份有限公司”为分析对象，基于商标公开数据，系统呈现企业商标概况、申请/注册趋势、状态分布、类别分布与商标检索明细。关键指标包括：商标总数 3907、有效商标 2309、无效商标 1598、近一年申请 376、类别覆盖 45 类。报告同时给出商标类别集中度与近期申请活跃度的结构化解读，便于品牌管理、竞争分析与知识产权决策参考</p></section>
     <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>查询对象与口径</h2><p class="biz-section-note">说明匹配对象、匹配方式与数据范围。</p></div><span class="biz-tag">Caliber</span></div><div class="info-list"><div class="info-row"><span class="info-label">匹配对象</span><span class="info-value">比亚迪股份有限公司</span></div><div class="info-row"><span class="info-label">匹配方式</span><span class="info-value">商标概况按企业主体匹配（keywordType=name）；检索支持商标名称/申请号/申请人/代理机构</span></div><div class="info-row"><span class="info-label">数据范围</span><span class="info-value">商标概况和趋势统计（企业整体口径）；商标检索明细（明细筛选：申请人=目标企业）；状态分布、类别分布</span></div><div class="info-row"><span class="info-label">局限说明</span><span class="info-value">数据来自商标公开数据库；少量字段可能存在更新延迟。</span></div></div></section>
-    <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>数据总览</h2><p class="biz-section-note">关键指标一览。</p></div><span class="biz-tag">Metrics</span></div><div class="biz-metrics"><div class="biz-metric"><span class="m-name">商标总数</span><span class="m-tag"></span><span class="m-value">3907</span></div><div class="biz-metric"><span class="m-name">有效商标</span><span class="m-tag t-neutral">有效率 59%</span><span class="m-value">2309</span></div><div class="biz-metric"><span class="m-name">无效商标</span><span class="m-tag"></span><span class="m-value">1598</span></div><div class="biz-metric"><span class="m-name">近一年申请</span><span class="m-tag"></span><span class="m-value">376</span></div><div class="biz-metric"><span class="m-name">类别覆盖</span><span class="m-tag"></span><span class="m-value">45 类</span></div><div class="biz-metric"><span class="m-name">检索结果</span><span class="m-tag"></span><span class="m-value">3907 条</span></div><div class="biz-metric"><span class="m-name">同期注册/申请量比</span><span class="m-tag t-neutral">申请 3110、注册 1969</span><span class="m-value">63%</span></div><div class="biz-metric"><span class="m-name">商标状态数</span><span class="m-tag"></span><span class="m-value">1</span></div></div></section>
+    <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>数据总览</h2><p class="biz-section-note">关键指标一览。</p></div><span class="biz-tag">Metrics</span></div><div class="biz-metrics"><div class="biz-metric"><span class="m-name">商标总数</span><span class="m-tag"></span><span class="m-value">3907</span><span class="m-hint">企业商标总量</span></div><div class="biz-metric"><span class="m-name">有效商标</span><span class="m-tag t-neutral">有效率 59%</span><span class="m-value">2309</span><span class="m-hint">当前有效商标数</span></div><div class="biz-metric"><span class="m-name">无效商标</span><span class="m-tag"></span><span class="m-value">1598</span><span class="m-hint">无效商标数</span></div><div class="biz-metric"><span class="m-name">近一年申请</span><span class="m-tag"></span><span class="m-value">376</span><span class="m-hint">最近一年申请商标数</span></div><div class="biz-metric"><span class="m-name">类别覆盖</span><span class="m-tag"></span><span class="m-value">45 类</span><span class="m-hint">涵盖商标类别数</span></div><div class="biz-metric"><span class="m-name">检索结果</span><span class="m-tag"></span><span class="m-value">3907 条</span><span class="m-hint">本次检索命中商标条数</span></div><div class="biz-metric"><span class="m-name">同期注册/申请量比</span><span class="m-tag t-neutral">申请 3110、注册 1969</span><span class="m-value">63%</span><span class="m-hint">报告期注册量/申请量（1969/3110），非同批成功率</span></div><div class="biz-metric"><span class="m-name">商标状态数</span><span class="m-tag"></span><span class="m-value">1</span><span class="m-hint">不同商标状态数量</span></div></div></section>
     <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>核心分析</h2><p class="biz-section-note">按维度展开目标核心数据与结构化明细。</p></div><span class="biz-tag">Analysis</span></div><h3 class="biz-subsection-title">商标概况</h3><div class="info-list"><div class="info-row"><span class="info-label">商标总数</span><span class="info-value">3907</span></div><div class="info-row"><span class="info-label">有效商标数</span><span class="info-value">2309</span></div><div class="info-row"><span class="info-label">无效商标数</span><span class="info-value">1598</span></div><div class="info-row"><span class="info-label">近一年申请数</span><span class="info-value">376</span></div><div class="info-row"><span class="info-label">涵盖类别</span><span class="info-value">1-化学原料、2-颜料油漆、3-日化用品、4-燃料油脂、5-医药、6-金属材料、7-机械设备、8-手工器械、9-科学仪器、10-医疗器械、11-灯具空调、12-运输工具、13-军火烟火、14-珠宝钟表、15-乐器、16-办公用品、17-橡胶制品、18-皮革皮具、19-建筑材料、20-家具、21-厨房洁具、22-绳网袋篷、23-纱线丝、24-布料床单、25-服装鞋帽、26-纽扣拉链、27-地毯席垫、28-健身器材、29-食品、30-方便食品、31-饲料种籽、32-啤酒饮料、33-酒、34-烟草烟具、35-广告销售、36-金融物管、37-建筑修理、38-通讯服务、39-运输储藏、40-材料加工、41-教育娱乐、42-设计研究、43-餐饮住宿、44-医疗园艺、45-社会法律</span></div><div class="info-row"><span class="info-label">商标状态</span><span class="info-value">商标已注册、商标无效、初审公告、商标其他情形、驳回复审中、等待实质审查、商标申请中、商标异议中、撤销/无效宣告申请审查中</span></div></div>
-<p class="biz-section-note">按年度统计商标申请数量</p><div class="chart-box"><h4 class="chart-title">商标申请趋势</h4><div class="chart-canvas" data-chart="line" data-spec="{&quot;type&quot;:&quot;line&quot;,&quot;area&quot;:true,&quot;x&quot;:[&quot;2017&quot;,&quot;2018&quot;,&quot;2019&quot;,&quot;2020&quot;,&quot;2021&quot;,&quot;2022&quot;,&quot;2023&quot;,&quot;2024&quot;,&quot;2025&quot;,&quot;2026&quot;],&quot;series&quot;:[{&quot;name&quot;:&quot;商标申请趋势&quot;,&quot;data&quot;:[162.0,375.0,315.0,184.0,379.0,325.0,366.0,176.0,452.0,376.0]}]}"></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>年份/周期</th><th>数量</th></tr></thead><tbody><tr><td>2017</td><td>162</td></tr><tr><td>2018</td><td>375</td></tr><tr><td>2019</td><td>315</td></tr><tr><td>2020</td><td>184</td></tr><tr><td>2021</td><td>379</td></tr><tr><td>2022</td><td>325</td></tr><tr><td>2023</td><td>366</td></tr><tr><td>2024</td><td>176</td></tr><tr><td>2025</td><td>452</td></tr><tr><td>2026</td><td>376</td></tr></tbody></table></div></details></div>
-<p class="biz-section-note">按年度统计商标注册数量</p><div class="chart-box"><h4 class="chart-title">商标注册趋势</h4><div class="chart-canvas" data-chart="line" data-spec="{&quot;type&quot;:&quot;line&quot;,&quot;area&quot;:true,&quot;x&quot;:[&quot;2017&quot;,&quot;2018&quot;,&quot;2019&quot;,&quot;2020&quot;,&quot;2021&quot;,&quot;2022&quot;,&quot;2023&quot;,&quot;2024&quot;,&quot;2025&quot;,&quot;2026&quot;],&quot;series&quot;:[{&quot;name&quot;:&quot;商标注册趋势&quot;,&quot;data&quot;:[59.0,201.0,428.0,176.0,139.0,144.0,104.0,288.0,132.0,298.0]}]}"></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>年份/周期</th><th>数量</th></tr></thead><tbody><tr><td>2017</td><td>59</td></tr><tr><td>2018</td><td>201</td></tr><tr><td>2019</td><td>428</td></tr><tr><td>2020</td><td>176</td></tr><tr><td>2021</td><td>139</td></tr><tr><td>2022</td><td>144</td></tr><tr><td>2023</td><td>104</td></tr><tr><td>2024</td><td>288</td></tr><tr><td>2025</td><td>132</td></tr><tr><td>2026</td><td>298</td></tr></tbody></table></div></details></div>
-<p class="biz-section-note">按商标状态统计数量</p><div class="chart-box"><h4 class="chart-title">商标状态分布</h4><div class="chart-canvas" data-chart="pie" data-spec="{&quot;type&quot;:&quot;pie&quot;,&quot;donut&quot;:true,&quot;data&quot;:[{&quot;name&quot;:&quot;等待实质审查&quot;,&quot;value&quot;:419.0},{&quot;name&quot;:&quot;初审公告&quot;,&quot;value&quot;:106.0},{&quot;name&quot;:&quot;驳回复审中&quot;,&quot;value&quot;:313.0},{&quot;name&quot;:&quot;商标无效&quot;,&quot;value&quot;:766.0},{&quot;name&quot;:&quot;商标已注册&quot;,&quot;value&quot;:2216.0},{&quot;name&quot;:&quot;商标异议中&quot;,&quot;value&quot;:4.0},{&quot;name&quot;:&quot;撤销/无效宣告申请审查中&quot;,&quot;value&quot;:8.0},{&quot;name&quot;:&quot;商标申请中&quot;,&quot;value&quot;:18.0},{&quot;name&quot;:&quot;商标其他情形&quot;,&quot;value&quot;:56.0}]}"></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>状态</th><th>数量</th></tr></thead><tbody><tr><td>等待实质审查</td><td>419</td></tr><tr><td>初审公告</td><td>106</td></tr><tr><td>驳回复审中</td><td>313</td></tr><tr><td>商标无效</td><td>766</td></tr><tr><td>商标已注册</td><td>2216</td></tr><tr><td>商标异议中</td><td>4</td></tr><tr><td>撤销/无效宣告申请审查中</td><td>8</td></tr><tr><td>商标申请中</td><td>18</td></tr><tr><td>商标其他情形</td><td>56</td></tr></tbody></table></div></details></div>
-<p class="biz-section-note">按国际分类统计数量</p><div class="chart-box"><h4 class="chart-title">商标类别分布</h4><div class="chart-canvas" data-chart="bar" data-spec="{&quot;type&quot;:&quot;bar&quot;,&quot;orient&quot;:&quot;v&quot;,&quot;names&quot;:[&quot;12-运输工具&quot;,&quot;9-科学仪器&quot;,&quot;37-建筑修理&quot;,&quot;7-机械设备&quot;,&quot;42-设计研究&quot;,&quot;其他&quot;],&quot;values&quot;:[1143.0,357.0,297.0,106.0,95.0,1909.0]}"></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>类别</th><th>数量</th></tr></thead><tbody><tr><td>12-运输工具</td><td>1143</td></tr><tr><td>9-科学仪器</td><td>357</td></tr><tr><td>37-建筑修理</td><td>297</td></tr><tr><td>7-机械设备</td><td>106</td></tr><tr><td>42-设计研究</td><td>95</td></tr><tr><td>其他</td><td>1909</td></tr></tbody></table></div></details></div>
+<p class="biz-section-note">按年度统计商标申请数量</p><div class="chart-box"><h4 class="chart-title">商标申请趋势</h4><div class="chart-frame" data-chart-state="static"><div class="chart-static"><svg width="984" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 984 300">
+<rect width="984" height="300" x="0" y="0" fill="none"></rect>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 214.5L960 214.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 168.5L960 168.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 122.5L960 122.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 76.5L960 76.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 30.5L960 30.5" fill="transparent" stroke="#E0E6F1" class="zr0-cls-0"></path>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#6E7079" stroke-linecap="round" class="zr0-cls-0"></path>
+<path d="M48.5 260L48.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M139.5 260L139.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M230.5 260L230.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M321.5 260L321.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M413.5 260L413.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M504.5 260L504.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M595.5 260L595.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M686.5 260L686.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M777.5 260L777.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M869.5 260L869.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<path d="M960.5 260L960.5 265" fill="transparent" stroke="#6E7079" class="zr0-cls-0"></path>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 260)" fill="#334155">0</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 214)" fill="#334155">100</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 168)" fill="#334155">200</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 122)" fill="#334155">300</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 76)" fill="#334155">400</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 30)" fill="#334155">500</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,93.6,268)" fill="#334155">2017</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,184.8,268)" fill="#334155">2018</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,276,268)" fill="#334155">2019</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,367.2,268)" fill="#334155">2020</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,458.4,268)" fill="#334155">2021</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,549.6,268)" fill="#334155">2022</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,640.8,268)" fill="#334155">2023</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,732,268)" fill="#334155">2024</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,823.2,268)" fill="#334155">2025</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,914.4,268)" fill="#334155">2026</text>
+<g clip-path="url(#static-chart-0-zr0-c0)">
+<path d="M93.6 185.5C93.6 185.5 131.5 87.5 184.8 87.5C222.7 87.5 233.5 94.6 276 115.1C324.7 138.6 325.2 175.4 367.2 175.4C416.4 175.4 406 85.7 458.4 85.7C497.2 85.7 503.7 110.5 549.6 110.5C594.9 110.5 602.1 91.6 640.8 91.6C693.3 91.6 691.2 179 732 179C782.4 179 767.1 52.1 823.2 52.1C858.3 52.1 914.4 87 914.4 87L914.4 260L823.2 260L732 260L640.8 260L549.6 260L458.4 260L367.2 260L276 260L184.8 260L93.6 260Z" fill="#0b5ca8" fill-opacity="0.18" class="zr0-cls-2"></path>
+<path d="M93.6 185.5C93.6 185.5 131.5 87.5 184.8 87.5C222.7 87.5 233.5 94.6 276 115.1C324.7 138.6 325.2 175.4 367.2 175.4C416.4 175.4 406 85.7 458.4 85.7C497.2 85.7 503.7 110.5 549.6 110.5C594.9 110.5 602.1 91.6 640.8 91.6C693.3 91.6 691.2 179 732 179C782.4 179 767.1 52.1 823.2 52.1C858.3 52.1 914.4 87 914.4 87" fill="transparent" stroke="#0b5ca8" stroke-width="2" stroke-linejoin="bevel" class="zr0-cls-3"></path>
+</g>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,93.6,185.48)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,184.8,87.5)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,276,115.1)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,367.2,175.36)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,458.4,85.66)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,549.6,110.5)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,640.8,91.64)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="6" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,732,179.04)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="7" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,823.2,52.08)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="8" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,914.4,87.04)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="9" ecmeta_ssr_type="chart" class="zr0-cls-4"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(93.6 177.48)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">162</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(184.8 79.5)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">375</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(276 107.1)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">315</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(367.2 167.36)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">184</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(458.4 77.66)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">379</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(549.6 102.5)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">325</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(640.8 83.64)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">366</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(732 171.04)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">176</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(823.2 44.08)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">452</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(914.4 79.04)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">376</text>
+<path d="M-5 -5l107 0l0 23.2l-107 0Z" transform="translate(443.5 5)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#ccc" stroke-width="0" class="zr0-cls-0"></path>
+<path d="M0 7L25 7" transform="translate(444.5 4.6)" fill="#000" stroke="#0b5ca8" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" class="zr0-cls-0"></path>
+<path d="M18.1 7A5.6 5.6 0 1 1 18.1 6.4A5.6 5.6 0 0 1 18.1 7" transform="translate(444.5 4.6)" fill="#fff" stroke="#0b5ca8" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" class="zr0-cls-0"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(444.5 4.6)" fill="#333">商标申请趋势</text>
+<path d="M-1 0.4l97 0l0 13.2l-97 0Z" transform="translate(444.5 4.6)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="legend" class="zr0-cls-5"></path>
+<defs >
+<clipPath id="static-chart-0-zr0-c0">
+<path d="M47 29l914 0l0 232l-914 0Z" fill="#000" class="zr0-cls-1"></path>
+</clipPath>
+</defs>
+<style ><![CDATA[
+.zr0-cls-0:hover {
+pointer-events:none;
+}
+.zr0-cls-1:hover {
+cursor:pointer;
+fill:rgba(0,0,0,1);
+}
+.zr0-cls-2:hover {
+cursor:pointer;
+fill:rgba(12,101,184,1);
+}
+.zr0-cls-3:hover {
+cursor:pointer;
+}
+.zr0-cls-4:hover {
+cursor:pointer;
+fill:rgba(255,255,255,1);
+}
+.zr0-cls-5:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+
+]]>
+
+</style>
+</svg></div><div class="chart-canvas" data-chart="line" data-spec="{&quot;type&quot;:&quot;line&quot;,&quot;area&quot;:true,&quot;x&quot;:[&quot;2017&quot;,&quot;2018&quot;,&quot;2019&quot;,&quot;2020&quot;,&quot;2021&quot;,&quot;2022&quot;,&quot;2023&quot;,&quot;2024&quot;,&quot;2025&quot;,&quot;2026&quot;],&quot;series&quot;:[{&quot;name&quot;:&quot;商标申请趋势&quot;,&quot;data&quot;:[162.0,375.0,315.0,184.0,379.0,325.0,366.0,176.0,452.0,376.0]}]}"></div><p class="chart-status" aria-live="polite"></p></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>年份/周期</th><th>数量</th></tr></thead><tbody><tr><td>2017</td><td>162</td></tr><tr><td>2018</td><td>375</td></tr><tr><td>2019</td><td>315</td></tr><tr><td>2020</td><td>184</td></tr><tr><td>2021</td><td>379</td></tr><tr><td>2022</td><td>325</td></tr><tr><td>2023</td><td>366</td></tr><tr><td>2024</td><td>176</td></tr><tr><td>2025</td><td>452</td></tr><tr><td>2026</td><td>376</td></tr></tbody></table></div></details></div>
+<p class="biz-section-note">按年度统计商标注册数量</p><div class="chart-box"><h4 class="chart-title">商标注册趋势</h4><div class="chart-frame" data-chart-state="static"><div class="chart-static"><svg width="984" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 984 300">
+<rect width="984" height="300" x="0" y="0" fill="none"></rect>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 214.5L960 214.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 168.5L960 168.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 122.5L960 122.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 76.5L960 76.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 30.5L960 30.5" fill="transparent" stroke="#E0E6F1" class="zr1-cls-6"></path>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#6E7079" stroke-linecap="round" class="zr1-cls-6"></path>
+<path d="M48.5 260L48.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M139.5 260L139.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M230.5 260L230.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M321.5 260L321.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M413.5 260L413.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M504.5 260L504.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M595.5 260L595.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M686.5 260L686.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M777.5 260L777.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M869.5 260L869.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<path d="M960.5 260L960.5 265" fill="transparent" stroke="#6E7079" class="zr1-cls-6"></path>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 260)" fill="#334155">0</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 214)" fill="#334155">100</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 168)" fill="#334155">200</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 122)" fill="#334155">300</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 76)" fill="#334155">400</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 30)" fill="#334155">500</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,93.6,268)" fill="#334155">2017</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,184.8,268)" fill="#334155">2018</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,276,268)" fill="#334155">2019</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,367.2,268)" fill="#334155">2020</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,458.4,268)" fill="#334155">2021</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,549.6,268)" fill="#334155">2022</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,640.8,268)" fill="#334155">2023</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,732,268)" fill="#334155">2024</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,823.2,268)" fill="#334155">2025</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="matrix(0.819,-0.574,0.574,0.819,914.4,268)" fill="#334155">2026</text>
+<g clip-path="url(#static-chart-1-zr1-c0)">
+<path d="M93.6 232.9C93.6 232.9 144 205.5 184.8 167.5C235.2 120.6 231.8 63.1 276 63.1C323 63.1 311.2 152 367.2 179C402.4 196.1 412.4 196.1 458.4 196.1C503.6 196.1 504.4 193.8 549.6 193.8C595.6 193.8 601.8 212.2 640.8 212.2C693 212.2 684.8 127.5 732 127.5C776 127.5 778.2 199.3 823.2 199.3C869.4 199.3 914.4 122.9 914.4 122.9L914.4 260L823.2 260L732 260L640.8 260L549.6 260L458.4 260L367.2 260L276 260L184.8 260L93.6 260Z" fill="#0b5ca8" fill-opacity="0.18" class="zr1-cls-8"></path>
+<path d="M93.6 232.9C93.6 232.9 144 205.5 184.8 167.5C235.2 120.6 231.8 63.1 276 63.1C323 63.1 311.2 152 367.2 179C402.4 196.1 412.4 196.1 458.4 196.1C503.6 196.1 504.4 193.8 549.6 193.8C595.6 193.8 601.8 212.2 640.8 212.2C693 212.2 684.8 127.5 732 127.5C776 127.5 778.2 199.3 823.2 199.3C869.4 199.3 914.4 122.9 914.4 122.9" fill="transparent" stroke="#0b5ca8" stroke-width="2" stroke-linejoin="bevel" class="zr1-cls-9"></path>
+</g>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,93.6,232.86)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,184.8,167.54)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,276,63.12)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,367.2,179.04)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,458.4,196.06)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,549.6,193.76)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,640.8,212.16)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="6" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,732,127.52)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="7" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,823.2,199.28)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="8" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<path d="M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0" transform="matrix(2,0,0,2,914.4,122.92)" fill="#fff" stroke="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="9" ecmeta_ssr_type="chart" class="zr1-cls-10"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(93.6 224.86)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">59</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(184.8 159.54)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">201</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(276 55.12)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">428</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(367.2 171.04)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">176</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(458.4 188.06)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">139</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(549.6 185.76)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">144</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(640.8 204.16)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">104</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(732 119.52)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">288</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(823.2 191.28)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">132</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(914.4 114.92)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">298</text>
+<path d="M-5 -5l107 0l0 23.2l-107 0Z" transform="translate(443.5 5)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#ccc" stroke-width="0" class="zr1-cls-6"></path>
+<path d="M0 7L25 7" transform="translate(444.5 4.6)" fill="#000" stroke="#0b5ca8" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" class="zr1-cls-6"></path>
+<path d="M18.1 7A5.6 5.6 0 1 1 18.1 6.4A5.6 5.6 0 0 1 18.1 7" transform="translate(444.5 4.6)" fill="#fff" stroke="#0b5ca8" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" class="zr1-cls-6"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(444.5 4.6)" fill="#333">商标注册趋势</text>
+<path d="M-1 0.4l97 0l0 13.2l-97 0Z" transform="translate(444.5 4.6)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="legend" class="zr1-cls-11"></path>
+<defs >
+<clipPath id="static-chart-1-zr1-c0">
+<path d="M47 29l914 0l0 232l-914 0Z" fill="#000" class="zr1-cls-7"></path>
+</clipPath>
+</defs>
+<style ><![CDATA[
+.zr1-cls-6:hover {
+pointer-events:none;
+}
+.zr1-cls-7:hover {
+cursor:pointer;
+fill:rgba(0,0,0,1);
+}
+.zr1-cls-8:hover {
+cursor:pointer;
+fill:rgba(12,101,184,1);
+}
+.zr1-cls-9:hover {
+cursor:pointer;
+}
+.zr1-cls-10:hover {
+cursor:pointer;
+fill:rgba(255,255,255,1);
+}
+.zr1-cls-11:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+
+]]>
+
+</style>
+</svg></div><div class="chart-canvas" data-chart="line" data-spec="{&quot;type&quot;:&quot;line&quot;,&quot;area&quot;:true,&quot;x&quot;:[&quot;2017&quot;,&quot;2018&quot;,&quot;2019&quot;,&quot;2020&quot;,&quot;2021&quot;,&quot;2022&quot;,&quot;2023&quot;,&quot;2024&quot;,&quot;2025&quot;,&quot;2026&quot;],&quot;series&quot;:[{&quot;name&quot;:&quot;商标注册趋势&quot;,&quot;data&quot;:[59.0,201.0,428.0,176.0,139.0,144.0,104.0,288.0,132.0,298.0]}]}"></div><p class="chart-status" aria-live="polite"></p></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>年份/周期</th><th>数量</th></tr></thead><tbody><tr><td>2017</td><td>59</td></tr><tr><td>2018</td><td>201</td></tr><tr><td>2019</td><td>428</td></tr><tr><td>2020</td><td>176</td></tr><tr><td>2021</td><td>139</td></tr><tr><td>2022</td><td>144</td></tr><tr><td>2023</td><td>104</td></tr><tr><td>2024</td><td>288</td></tr><tr><td>2025</td><td>132</td></tr><tr><td>2026</td><td>298</td></tr></tbody></table></div></details></div>
+<p class="biz-section-note">按商标状态统计数量</p><div class="chart-box"><h4 class="chart-title">商标状态分布</h4><div class="chart-frame" data-chart-state="static"><div class="chart-static"><svg width="984" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 984 300">
+<rect width="984" height="300" x="0" y="0" fill="none"></rect>
+<polyline points="525.7 68.7 530.7 54.6 545.7 54.6" fill="transparent" stroke="#0b5ca8" class="zr2-cls-12"></polyline>
+<polyline points="562.2 91 572.5 80.1 587.5 80.1" fill="transparent" stroke="#0284c7" class="zr2-cls-12"></polyline>
+<polyline points="582.7 118.4 596.1 111.5 611.1 111.5" fill="transparent" stroke="#0b3768" class="zr2-cls-12"></polyline>
+<polyline points="586.2 204.1 600.1 209.8 615.1 209.8" fill="transparent" stroke="#d97706" class="zr2-cls-12"></polyline>
+<polyline points="396.2 200 382.1 205.1 367.1 205.1" fill="transparent" stroke="#059669" class="zr2-cls-12"></polyline>
+<polyline points="478.3 63.9 394.2 87.4 394.2 87.4" fill="transparent" stroke="#dc2626" class="zr2-cls-12"></polyline>
+<polyline points="479.2 63.8 407.8 74.3 407.8 74.3" fill="transparent" stroke="#7c3aed" class="zr2-cls-12"></polyline>
+<polyline points="481.4 63.6 442.4 61.2 427.4 61.2" fill="transparent" stroke="#db2777" class="zr2-cls-12"></polyline>
+<polyline points="487.4 63.1 486.7 48.1 471.7 48.1" fill="transparent" stroke="#0891b2" class="zr2-cls-12"></polyline>
+<path d="M492 63A102 102 0 0 1 555.7 85.3L531.3 115.8A63 63 0 0 0 492 102Z" fill="#0b5ca8" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="zr2-cls-13"></path>
+<path d="M555.7 85.3A102 102 0 0 1 568.3 97.3L539.1 123.2A63 63 0 0 0 531.3 115.8Z" fill="#0284c7" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="zr2-cls-14"></path>
+<path d="M568.3 97.3A102 102 0 0 1 591.5 142.5L553.4 151.1A63 63 0 0 0 539.1 123.2Z" fill="#0b3768" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="chart" class="zr2-cls-15"></path>
+<path d="M591.5 142.5A102 102 0 0 1 546.3 251.3L525.5 218.3A63 63 0 0 0 553.4 151.1Z" fill="#d97706" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="chart" class="zr2-cls-16"></path>
+<path d="M546.3 251.3A102 102 0 1 1 477.9 64L483.3 102.6A63 63 0 1 0 525.5 218.3Z" fill="#059669" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="chart" class="zr2-cls-17"></path>
+<path d="M477.9 64A102 102 0 0 1 478.6 63.9L483.7 102.5A63 63 0 0 0 483.3 102.6Z" fill="#dc2626" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="chart" class="zr2-cls-18"></path>
+<path d="M478.6 63.9A102 102 0 0 1 479.9 63.7L484.5 102.4A63 63 0 0 0 483.7 102.5Z" fill="#7c3aed" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="6" ecmeta_ssr_type="chart" class="zr2-cls-19"></path>
+<path d="M479.9 63.7A102 102 0 0 1 482.8 63.4L486.3 102.3A63 63 0 0 0 484.5 102.4Z" fill="#db2777" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="7" ecmeta_ssr_type="chart" class="zr2-cls-20"></path>
+<path d="M482.8 63.4A102 102 0 0 1 492 63L492 102A63 63 0 0 0 486.3 102.3Z" fill="#0891b2" stroke="#fff" stroke-width="2" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="8" ecmeta_ssr_type="chart" class="zr2-cls-21"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(550.6871 54.5812)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">等待实质审查: 419 (10.73%)</text>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(592.5409 80.1344)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">初审公告: 106 (2.72%)</text>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(616.072 111.5396)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">驳回复审中: 313 (8.01%)</text>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(620.0669 209.8392)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">商标无效: 766 (19.61%)</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(362.0882 205.1048)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">商标已注册: 2216 (56.73%)</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(389.2255 87.4187)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">商标异议中: 4 (0.1%)</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(402.7528 74.3187)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">撤销/无效宣告申请审查中: 8 (0.21%)</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(422.4136 61.2187)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">商标申请中: 18 (0.46%)</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" xml:space="preserve" transform="translate(466.732 48.1187)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">商标其他情形: 56 (1.43%)</text>
+<path d="M-5 -5l933.1 0l0 26l-933.1 0Z" transform="translate(30.46 279)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#ccc" stroke-width="0" class="zr2-cls-22"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(31.46 280)" fill="#0b5ca8" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(31.46 280)" fill="#333">等待实质审查</text>
+<path d="M-1 -1l97 0l0 16l-97 0Z" transform="translate(31.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(138.46 280)" fill="#0284c7" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(138.46 280)" fill="#333">初审公告</text>
+<path d="M-1 -1l75 0l0 16l-75 0Z" transform="translate(138.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(223.46 280)" fill="#0b3768" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(223.46 280)" fill="#333">驳回复审中</text>
+<path d="M-1 -1l86 0l0 16l-86 0Z" transform="translate(223.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(319.46 280)" fill="#d97706" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(319.46 280)" fill="#333">商标无效</text>
+<path d="M-1 -1l75 0l0 16l-75 0Z" transform="translate(319.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(404.46 280)" fill="#059669" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(404.46 280)" fill="#333">商标已注册</text>
+<path d="M-1 -1l86 0l0 16l-86 0Z" transform="translate(404.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(500.46 280)" fill="#dc2626" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(500.46 280)" fill="#333">商标异议中</text>
+<path d="M-1 -1l86 0l0 16l-86 0Z" transform="translate(500.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(596.46 280)" fill="#7c3aed" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="6" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(596.46 280)" fill="#333">撤销/无效宣告申请审查中</text>
+<path d="M-1 -1l155.1 0l0 16l-155.1 0Z" transform="translate(596.46 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="6" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(761.54 280)" fill="#db2777" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="7" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(761.54 280)" fill="#333">商标申请中</text>
+<path d="M-1 -1l86 0l0 16l-86 0Z" transform="translate(761.54 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="7" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<path d="M3.5 0L21.5 0A3.5 3.5 0 0 1 25 3.5L25 10.5A3.5 3.5 0 0 1 21.5 14L3.5 14A3.5 3.5 0 0 1 0 10.5L0 3.5A3.5 3.5 0 0 1 3.5 0" transform="translate(857.54 280)" fill="#0891b2" stroke="#fff" stroke-width="2" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="round" ecmeta_series_index="0" ecmeta_data_index="8" ecmeta_ssr_type="legend" ecmeta_silent="true" class="zr2-cls-22"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" x="30" y="7" transform="translate(857.54 280)" fill="#333">商标其他情形</text>
+<path d="M-1 -1l97 0l0 16l-97 0Z" transform="translate(857.54 280)" fill="transparent" ecmeta_series_index="0" ecmeta_data_index="8" ecmeta_ssr_type="legend" class="zr2-cls-23"></path>
+<style ><![CDATA[
+.zr2-cls-12:hover {
+cursor:pointer;
+}
+.zr2-cls-13:hover {
+cursor:pointer;
+fill:rgba(12,101,184,1);
+}
+.zr2-cls-14:hover {
+cursor:pointer;
+fill:rgba(2,145,218,1);
+}
+.zr2-cls-15:hover {
+cursor:pointer;
+fill:rgba(12,60,114,1);
+}
+.zr2-cls-16:hover {
+cursor:pointer;
+fill:rgba(238,130,6,1);
+}
+.zr2-cls-17:hover {
+cursor:pointer;
+fill:rgba(5,165,115,1);
+}
+.zr2-cls-18:hover {
+cursor:pointer;
+fill:rgba(242,41,41,1);
+}
+.zr2-cls-19:hover {
+cursor:pointer;
+fill:rgba(136,63,255,1);
+}
+.zr2-cls-20:hover {
+cursor:pointer;
+fill:rgba(240,42,130,1);
+}
+.zr2-cls-21:hover {
+cursor:pointer;
+fill:rgba(8,159,195,1);
+}
+.zr2-cls-22:hover {
+pointer-events:none;
+}
+.zr2-cls-23:hover {
+cursor:pointer;
+fill:rgba(0,0,0,0);
+}
+
+]]>
+
+</style>
+</svg></div><div class="chart-canvas" data-chart="pie" data-spec="{&quot;type&quot;:&quot;pie&quot;,&quot;donut&quot;:true,&quot;data&quot;:[{&quot;name&quot;:&quot;等待实质审查&quot;,&quot;value&quot;:419.0},{&quot;name&quot;:&quot;初审公告&quot;,&quot;value&quot;:106.0},{&quot;name&quot;:&quot;驳回复审中&quot;,&quot;value&quot;:313.0},{&quot;name&quot;:&quot;商标无效&quot;,&quot;value&quot;:766.0},{&quot;name&quot;:&quot;商标已注册&quot;,&quot;value&quot;:2216.0},{&quot;name&quot;:&quot;商标异议中&quot;,&quot;value&quot;:4.0},{&quot;name&quot;:&quot;撤销/无效宣告申请审查中&quot;,&quot;value&quot;:8.0},{&quot;name&quot;:&quot;商标申请中&quot;,&quot;value&quot;:18.0},{&quot;name&quot;:&quot;商标其他情形&quot;,&quot;value&quot;:56.0}]}"></div><p class="chart-status" aria-live="polite"></p></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>状态</th><th>数量</th></tr></thead><tbody><tr><td>等待实质审查</td><td>419</td></tr><tr><td>初审公告</td><td>106</td></tr><tr><td>驳回复审中</td><td>313</td></tr><tr><td>商标无效</td><td>766</td></tr><tr><td>商标已注册</td><td>2216</td></tr><tr><td>商标异议中</td><td>4</td></tr><tr><td>撤销/无效宣告申请审查中</td><td>8</td></tr><tr><td>商标申请中</td><td>18</td></tr><tr><td>商标其他情形</td><td>56</td></tr></tbody></table></div></details></div>
+<p class="biz-section-note">按国际分类统计数量</p><div class="chart-box"><h4 class="chart-title">商标类别分布</h4><div class="chart-frame" data-chart-state="static"><div class="chart-static"><svg width="984" height="300" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 984 300">
+<rect width="984" height="300" x="0" y="0" fill="none"></rect>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 227.5L960 227.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 194.5L960 194.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 161.5L960 161.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 128.5L960 128.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 95.5L960 95.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 63.5L960 63.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 30.5L960 30.5" fill="transparent" stroke="#E0E6F1" class="zr3-cls-24"></path>
+<path d="M48 260.5L960 260.5" fill="transparent" stroke="#6E7079" stroke-linecap="round" class="zr3-cls-24"></path>
+<path d="M48.5 260L48.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M200.5 260L200.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M352.5 260L352.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M504.5 260L504.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M656.5 260L656.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M808.5 260L808.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<path d="M960.5 260L960.5 265" fill="transparent" stroke="#6E7079" class="zr3-cls-24"></path>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 260)" fill="#334155">0</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 227.1429)" fill="#334155">300</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 194.2857)" fill="#334155">600</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 161.4286)" fill="#334155">900</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 128.5714)" fill="#334155">1,200</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 95.7143)" fill="#334155">1,500</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 62.8571)" fill="#334155">1,800</text>
+<text dominant-baseline="central" text-anchor="end" style="font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" transform="translate(40 30)" fill="#334155">2,100</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(124 268)" fill="#334155">12-运输工具</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(276 268)" fill="#334155">9-科学仪器</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(428 268)" fill="#334155">37-建筑修理</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(580 268)" fill="#334155">7-机械设备</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(732 268)" fill="#334155">42-设计研究</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="5.5" transform="translate(884 268)" fill="#334155">其他</text>
+<path d="M103 260l42 0l0 -125.2l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<path d="M255 260l42 0l0 -39.1l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<path d="M407 260l42 0l0 -32.5l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="2" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<path d="M559 260l42 0l0 -11.6l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="3" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<path d="M711 260l42 0l0 -10.4l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="4" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<path d="M863 260l42 0l0 -209.1l-42 0Z" fill="#0b5ca8" ecmeta_series_index="0" ecmeta_data_index="5" ecmeta_ssr_type="chart" class="zr3-cls-25"></path>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(124 129.8143)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">1143</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(276 215.9)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">357</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(428 222.4714)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">297</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(580 243.3905)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">106</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(732 244.5952)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">95</text>
+<text dominant-baseline="central" text-anchor="middle" style="font-size:11px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;" y="-5.5" transform="translate(884 45.919)" fill="#333" stroke="rgb(255,255,255)" stroke-width="2" paint-order="stroke" stroke-miterlimit="2">1909</text>
+<path d="M-5 -5l10 0l0 10l-10 0Z" transform="translate(492 5)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#ccc" stroke-width="0" class="zr3-cls-24"></path>
+<style ><![CDATA[
+.zr3-cls-24:hover {
+pointer-events:none;
+}
+.zr3-cls-25:hover {
+cursor:pointer;
+fill:rgba(12,101,184,1);
+}
+
+]]>
+
+</style>
+</svg></div><div class="chart-canvas" data-chart="bar" data-spec="{&quot;type&quot;:&quot;bar&quot;,&quot;orient&quot;:&quot;v&quot;,&quot;names&quot;:[&quot;12-运输工具&quot;,&quot;9-科学仪器&quot;,&quot;37-建筑修理&quot;,&quot;7-机械设备&quot;,&quot;42-设计研究&quot;,&quot;其他&quot;],&quot;values&quot;:[1143.0,357.0,297.0,106.0,95.0,1909.0]}"></div><p class="chart-status" aria-live="polite"></p></div><details class="chart-data"><summary>数据明细</summary><div class="table-wrap"><table><thead><tr><th>类别</th><th>数量</th></tr></thead><tbody><tr><td>12-运输工具</td><td>1143</td></tr><tr><td>9-科学仪器</td><td>357</td></tr><tr><td>37-建筑修理</td><td>297</td></tr><tr><td>7-机械设备</td><td>106</td></tr><tr><td>42-设计研究</td><td>95</td></tr><tr><td>其他</td><td>1909</td></tr></tbody></table></div></details></div>
 <h3 class="biz-subsection-title">商标检索明细</h3><p class="biz-section-note">明细筛选：申请人=比亚迪股份有限公司；命中 3907 条，展示前 5 条</p><div class="table-wrap"><table><thead><tr><th>商标名称</th><th>申请号</th><th>申请人</th><th>国际分类</th><th>申请日期</th><th>注册日期</th><th>商标状态</th><th>代理机构</th></tr></thead><tbody><tr><td>AUTOWING</td><td>9984687</td><td>比亚迪股份有限公司</td><td>9-科学仪器</td><td>2011-09-20</td><td>2013-01-14</td><td>商标已注册</td><td>北京集佳知识产权代理有限公司</td></tr><tr><td>AUTOWING</td><td>9984675</td><td>比亚迪股份有限公司</td><td>9-科学仪器</td><td>2011-09-20</td><td>2013-01-14</td><td>商标已注册</td><td>北京集佳知识产权代理有限公司</td></tr><tr><td>AUTO WING</td><td>9984665</td><td>比亚迪股份有限公司</td><td>9-科学仪器</td><td>2011-09-20</td><td>2013-01-14</td><td>商标已注册</td><td>北京集佳知识产权代理有限公司</td></tr><tr><td>DENZA</td><td>9977264</td><td>比亚迪股份有限公司</td><td>7-机械设备</td><td>2011-09-19</td><td>2014-02-21</td><td>商标已注册</td><td>北京中咨爱普商标代理有限公司</td></tr><tr><td>DENZA</td><td>9977262</td><td>比亚迪股份有限公司</td><td>28-健身器材</td><td>2011-09-19</td><td>2014-01-07</td><td>商标已注册</td><td>北京中咨爱普商标代理有限公司</td></tr></tbody></table></div></section>
     <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>代表性记录</h2><p class="biz-section-note">关键明细记录 Top N。</p></div><span class="biz-tag">Records</span></div><div class="table-wrap"><table><thead><tr><th>商标名称</th><th>国际分类</th><th>申请日期</th><th>商标状态</th></tr></thead><tbody><tr><td>AUTOWING</td><td>9-科学仪器</td><td>2011-09-20</td><td>商标已注册</td></tr><tr><td>AUTOWING</td><td>9-科学仪器</td><td>2011-09-20</td><td>商标已注册</td></tr><tr><td>AUTO WING</td><td>9-科学仪器</td><td>2011-09-20</td><td>商标已注册</td></tr><tr><td>DENZA</td><td>7-机械设备</td><td>2011-09-19</td><td>商标已注册</td></tr><tr><td>DENZA</td><td>28-健身器材</td><td>2011-09-19</td><td>商标已注册</td></tr></tbody></table></div></section>
     <section class="report-page biz-section"><div class="report-topbar"><div class="report-stripe"></div><div class="report-banner">商标大数据报告</div></div><div class="biz-section-head"><div><h2>特征与洞察</h2><p class="biz-section-note">基于数据的结构化解读。</p></div><span class="biz-tag">Insights</span></div><div class="structural-feature-grid"><article class="structural-feature-card">
